@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 import plotly.graph_objects as go
 
-API_BASE = "http://110.40.128.239:8000/api/v1"
+API_BASE = "https://alphastock.cloud/api/v1"
 
 st.set_page_config(
     page_title="AlphaStock",
