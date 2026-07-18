@@ -26,7 +26,11 @@ st.markdown(
 /* 字体覆盖但排除 Material 图标 */
 *:not([data-testid="stIconMaterial"]):not(.material-symbols-rounded):not(.material-symbols-outlined):not([class*="material-symbols"]):not(i){font-family:'Inter','PingFang SC',sans-serif;}
 [data-testid="stIconMaterial"],.material-symbols-rounded,.material-symbols-outlined,[class*="material-symbols"]{font-family:'Material Symbols Rounded','Material Symbols Outlined'!important;}
-#MainMenu,footer,header{visibility:hidden;}
+#MainMenu,footer{visibility:hidden;}
+/* header保留但透明化，只留侧边栏展开按钮 */
+header[data-testid="stHeader"]{background:transparent!important;}
+header [data-testid="stToolbar"]{visibility:hidden;}
+[data-testid="stSidebarCollapsedControl"]{visibility:visible!important;display:flex!important;}
 .stApp,[data-testid="stAppViewContainer"]{background:#faf9f7!important;}
 [data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;}
 [data-testid="stSidebar"] > div:first-child{padding-top:12px;}
