@@ -146,7 +146,7 @@ if not st.session_state.token:
                     r = requests.post(
                         f"{API_BASE}/auth/login",
                         json={"username": lu, "password": lp},
-                        timeout=10,
+                        timeout=60,
                     )
                     if r.status_code == 200:
                         d = r.json()
@@ -168,7 +168,7 @@ if not st.session_state.token:
                     r = requests.post(
                         f"{API_BASE}/auth/register",
                         json={"username": ru, "password": rp},
-                        timeout=10,
+                        timeout=60,
                     )
                     if r.status_code == 200:
                         d = r.json()
@@ -187,7 +187,7 @@ if not st.session_state.token:
 # 已登录：主界面
 # ══════════════════════════════════════════════════════════════════════════
 try:
-    backend_ok = requests.get(f"{API_BASE}/health", timeout=2).status_code == 200
+    backend_ok = requests.get(f"{API_BASE}/health", timeout=60).status_code == 200
 except:
     backend_ok = False
 
@@ -269,7 +269,7 @@ with st.sidebar:
             requests.post(
                 f"{API_BASE}/auth/logout",
                 json={"token": st.session_state.token},
-                timeout=5,
+                timeout=60,
             )
         except:
             pass
