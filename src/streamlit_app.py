@@ -27,8 +27,11 @@ st.markdown(
 *,*::before,*::after{font-family:'Inter','PingFang SC',sans-serif!important;}
 #MainMenu,footer,header{visibility:hidden;}
 .stApp,[data-testid="stAppViewContainer"]{background:#faf9f7!important;}
-[data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;width:260px!important;}
-[data-testid="stSidebar"] > div{padding-top:12px;}
+[data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;}
+[data-testid="stSidebar"] > div:first-child{padding-top:12px;}
+/* 保护侧边栏折叠按钮，不被隐藏 */
+[data-testid="stSidebarCollapseButton"]{display:flex!important;visibility:visible!important;}
+button[kind="header"]{display:flex!important;visibility:visible!important;}
 
 /* 主区域 */
 .main .block-container{max-width:800px!important;padding:30px 20px 100px!important;}
@@ -67,7 +70,19 @@ st.markdown(
 .stTabs [data-baseweb="tab-list"]{border-bottom:1px solid #ebe8e2!important;}
 .stTabs [data-baseweb="tab"]{color:#9b9b93!important;font-size:11px!important;padding:5px 12px!important;}
 .stTabs [aria-selected="true"]{color:#1a1a1a!important;border-bottom:2px solid #1a1a1a!important;font-weight:600!important;}
-label{font-size:11px!important;color:#3a3a3a!important;}
+/* label 只作用于非 select/slider 的场景 */
+[data-testid="stTextInput"] label,
+[data-testid="stTextArea"] label,
+[data-testid="stSlider"] label,
+[data-testid="stCheckbox"] label,
+[data-testid="stRadio"] label,
+[data-testid="stCaption"],
+.stCaption{font-size:11px!important;color:#3a3a3a!important;}
+/* selectbox 单独处理，保留原生样式 */
+[data-testid="stSelectbox"] label{font-size:11px!important;color:#3a3a3a!important;}
+[data-baseweb="select"]{border-radius:8px!important;}
+[data-baseweb="select"] [data-baseweb="input"]{font-size:13px!important;}
+[data-baseweb="popover"] li{font-size:13px!important;}
 </style>
 """,
     unsafe_allow_html=True,
@@ -412,15 +427,60 @@ if mode == "chat":
                 )
         st.rerun()
 
+    # ── 多模态上传（+ 按钮）──
+    with st.expander("📎 上传文件 / 图片", expanded=False):
+        up_col1, up_col2 = st.columns(2)
+        with up_col1:
+            uploaded_img = st.file_uploader(
+                "上传截图 / 财报图片",
+                type=["png", "jpg", "jpeg", "webp"],
+                key="uploader_img",
+                label_visibility="collapsed",
+            )
+            if uploaded_img:
+                st.session_state.up_image = uploaded_img
+                st.image(uploaded_img, width=180)
+                st.caption(f"📷 {uploaded_img.name}")
+        with up_col2:
+            uploaded_file = st.file_uploader(
+                "上传 PDF / CSV",
+                type=["pdf", "csv", "txt"],
+                key="uploader_file",
+                label_visibility="collapsed",
+            )
+            if uploaded_file:
+                st.session_state.up_file = uploaded_file
+                st.caption(f"📄 {uploaded_file.name} · 已就绪")
+        if st.session_state.up_image or st.session_state.up_file:
+            if st.button("🗑 清除附件", key="clear_attach"):
+                st.session_state.up_image = None
+                st.session_state.up_file = None
+                st.rerun()
+
     # ── 原生chat_input（自动固定底部，Claude样式）──
     prompt = st.chat_input("输入股票代码（如 600150）或直接提问...")
     if prompt:
         if not st.session_state.current_conv:
             new_conv()
         cid = st.session_state.current_conv
-        st.session_state.conversations[cid]["messages"].append(
-            {"role": "user", "content": prompt}
+        has_file = st.session_state.up_file is not None
+        has_img = st.session_state.up_image is not None
+        file_name = (
+            st.session_state.up_image.name
+            if has_img
+            else (st.session_state.up_file.name if has_file else "")
         )
+        st.session_state.conversations[cid]["messages"].append(
+            {
+                "role": "user",
+                "content": prompt,
+                "has_file": has_file or has_img,
+                "file_name": file_name,
+            }
+        )
+        # 发完清除附件
+        st.session_state.up_file = None
+        st.session_state.up_image = None
         codes = re.findall(r"\b\d{6}\b", prompt)
         if codes:
             st.session_state._pending = codes[0]
