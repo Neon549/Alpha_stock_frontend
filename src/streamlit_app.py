@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 MODEL_OPTIONS = {
-    "fast": {"label": "快速", "desc": "DeepSeek V3", "icon": "⚡"},
+    "fast": {"label": "快�?, "desc": "DeepSeek V3", "icon": "�?},
     "smart": {"label": "精准", "desc": "DeepSeek R1", "icon": "🧠"},
     "strong": {"label": "强力", "desc": "R1 严格", "icon": "🔬"},
 }
@@ -30,7 +30,7 @@ st.markdown(
 [data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;width:260px!important;}
 [data-testid="stSidebar"] > div{padding-top:12px;}
 
-/* 主区域 */
+/* 主区�?*/
 .main .block-container{max-width:800px!important;padding:30px 20px 100px!important;}
 
 /* 欢迎 */
@@ -92,11 +92,11 @@ for k, v in {
 
 SECTORS = {
     "造船": {"600150": "中国船舶", "601989": "中国重工"},
-    "CPO光模块": {"300308": "中际旭创", "002281": "光迅科技"},
+    "CPO光模�?: {"300308": "中际旭创", "002281": "光迅科技"},
     "AI算力": {"002261": "拓维信息", "688041": "海光信息"},
-    "半导体": {"603501": "韦尔股份", "002371": "北方华创"},
+    "半导�?: {"603501": "韦尔股份", "002371": "北方华创"},
     "军工": {"600760": "中航沈飞", "000768": "中航西飞"},
-    "新能源": {"300750": "宁德时代", "002594": "比亚迪"},
+    "新能�?: {"300750": "宁德时代", "002594": "比亚�?},
     "有色金属": {"601899": "紫金矿业", "600362": "江西铜业"},
     "煤炭能源": {"601088": "中国神华", "601898": "中煤能源"},
 }
@@ -104,7 +104,7 @@ SECTORS = {
 
 def new_conv():
     cid = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
-    st.session_state.conversations[cid] = {"title": "新对话", "messages": []}
+    st.session_state.conversations[cid] = {"title": "新对�?, "messages": []}
     st.session_state.current_conv = cid
     st.session_state.mode = "chat"
     return cid
@@ -118,7 +118,7 @@ def get_msgs():
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 登录页（未登录时显示）
+# 登录页（未登录时显示�?
 # ══════════════════════════════════════════════════════════════════════════
 if not st.session_state.token:
     st.markdown(
@@ -128,7 +128,7 @@ if not st.session_state.token:
                     font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;
                     margin:0 auto 16px">A</div>
         <div style="font-size:24px;font-weight:600;color:#1a1a1a">AlphaStock</div>
-        <div style="font-size:13px;color:#9b9b93;margin-top:4px">智能投研助手 · 登录后开始使用</div>
+        <div style="font-size:13px;color:#9b9b93;margin-top:4px">智能投研助手 · 登录后开始使�?/div>
     </div>
     """,
         unsafe_allow_html=True,
@@ -139,14 +139,14 @@ if not st.session_state.token:
         tab_login, tab_reg = st.tabs(["登录", "注册"])
 
         with tab_login:
-            lu = st.text_input("用户名", key="login_user")
+            lu = st.text_input("用户�?, key="login_user")
             lp = st.text_input("密码", type="password", key="login_pwd")
             if st.button("登录", use_container_width=True, key="do_login"):
                 try:
                     r = requests.post(
                         f"{API_BASE}/auth/login",
                         json={"username": lu, "password": lp},
-                        timeout=10,
+                        timeout=60,
                     )
                     if r.status_code == 200:
                         d = r.json()
@@ -159,16 +159,16 @@ if not st.session_state.token:
                     st.error(f"连接失败：{e}")
 
         with tab_reg:
-            ru = st.text_input("用户名", key="reg_user", help="至少2个字符")
+            ru = st.text_input("用户�?, key="reg_user", help="至少2个字�?)
             rp = st.text_input(
-                "密码", type="password", key="reg_pwd", help="至少4个字符"
+                "密码", type="password", key="reg_pwd", help="至少4个字�?
             )
             if st.button("注册", use_container_width=True, key="do_reg"):
                 try:
                     r = requests.post(
                         f"{API_BASE}/auth/register",
                         json={"username": ru, "password": rp},
-                        timeout=10,
+                        timeout=60,
                     )
                     if r.status_code == 200:
                         d = r.json()
@@ -180,14 +180,14 @@ if not st.session_state.token:
                 except Exception as e:
                     st.error(f"连接失败：{e}")
 
-    st.stop()  # 未登录时停在这里，不渲染主界面
+    st.stop()  # 未登录时停在这里，不渲染主界�?
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# 已登录：主界面
+# 已登录：主界�?
 # ══════════════════════════════════════════════════════════════════════════
 try:
-    backend_ok = requests.get(f"{API_BASE}/health", timeout=2).status_code == 200
+    backend_ok = requests.get(f"{API_BASE}/health", timeout=60).status_code == 200
 except:
     backend_ok = False
 
@@ -200,7 +200,7 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    if st.button("＋　新对话", use_container_width=True, key="nc"):
+    if st.button("＋　新对�?, use_container_width=True, key="nc"):
         new_conv()
         st.rerun()
 
@@ -231,7 +231,7 @@ with st.sidebar:
         ("backtest", "📊 量化回测"),
         ("alpha", "🧮 Alpha选股"),
         ("scan", "🎯 今日买点"),
-        ("filter", "🔍 板块筛选"),
+        ("filter", "🔍 板块筛�?),
     ]:
         if st.button(label, key=f"nav_{key}", use_container_width=True):
             st.session_state.mode = key
@@ -252,7 +252,7 @@ with st.sidebar:
     else:
         st.caption("暂无历史")
 
-    # 底部：用户信息 + 登出
+    # 底部：用户信�?+ 登出
     st.markdown("<div style='flex:1'></div>", unsafe_allow_html=True)
     st.markdown("---")
     st.markdown(
@@ -269,7 +269,7 @@ with st.sidebar:
             requests.post(
                 f"{API_BASE}/auth/logout",
                 json={"token": st.session_state.token},
-                timeout=5,
+                timeout=60,
             )
         except:
             pass
@@ -277,7 +277,7 @@ with st.sidebar:
         st.session_state.username = None
         st.rerun()
 
-# ── 主区域 ──
+# ── 主区�?──
 mode = st.session_state.mode
 
 if mode == "chat":
@@ -286,8 +286,8 @@ if mode == "chat":
         st.markdown(
             """
         <div class="welcome">
-            <h1>你好，我是 AlphaStock</h1>
-            <p>输入股票代码开始分析，或上传财报截图</p>
+            <h1>你好，我�?AlphaStock</h1>
+            <p>输入股票代码开始分析，或上传财报截�?/p>
         </div>
         """,
             unsafe_allow_html=True,
@@ -342,7 +342,7 @@ if mode == "chat":
                     unsafe_allow_html=True,
                 )
                 t1, t2, t3, t4, t5 = st.tabs(
-                    ["💼 决策", "📊 基本面", "📈 技术面", "📰 情绪", "🔬 辩论"]
+                    ["💼 决策", "📊 基本�?, "📈 技术面", "📰 情绪", "🔬 辩论"]
                 )
                 with t1:
                     st.markdown(dtxt or "暂无")
@@ -361,7 +361,7 @@ if mode == "chat":
                     unsafe_allow_html=True,
                 )
 
-    # 处理待分析
+    # 处理待分�?
     if st.session_state._pending:
         code = st.session_state._pending
         model = st.session_state.model
@@ -374,7 +374,7 @@ if mode == "chat":
             st.session_state.conversations[cid]["messages"].append(
                 {"role": "user", "content": f"分析 {code}"}
             )
-        with st.spinner(f"正在用「{MODEL_OPTIONS[model]['label']}」分析 {code}..."):
+        with st.spinner(f"正在用「{MODEL_OPTIONS[model]['label']}」分�?{code}..."):
             try:
                 r = requests.post(
                     f"{API_BASE}/analyze",
@@ -429,14 +429,14 @@ if mode == "chat":
                 {
                     "role": "assistant",
                     "type": "text",
-                    "content": "请输入6位股票代码，例如 <b>600150</b>（中国船舶）",
+                    "content": "请输�?位股票代码，例如 <b>600150</b>（中国船舶）",
                 }
             )
         st.rerun()
 
 elif mode == "backtest":
     st.markdown("### 量化回测")
-    st.caption("KDJ / RSI / 布林带 · Backtrader")
+    st.caption("KDJ / RSI / 布林�?· Backtrader")
     c1, c2, c3, c4 = st.columns([1.2, 1.5, 0.9, 0.9])
     with c1:
         code = st.text_input("股票代码", "600150")
@@ -446,18 +446,18 @@ elif mode == "backtest":
             ["kdj_oversold", "j_extreme", "rsi", "boll", "kdj_macd"],
             format_func=lambda x: {
                 "kdj_oversold": "KDJ超卖",
-                "j_extreme": "J极值",
+                "j_extreme": "J极�?,
                 "rsi": "RSI超卖",
-                "boll": "布林带",
+                "boll": "布林�?,
                 "kdj_macd": "KDJ+MACD",
             }[x],
         )
     with c3:
-        sd = st.text_input("开始", "20240101")
+        sd = st.text_input("开�?, "20240101")
     with c4:
         ed = st.text_input("结束", "20260530")
-    if st.button("开始回测 →"):
-        with st.spinner("回测中..."):
+    if st.button("开始回�?�?):
+        with st.spinner("回测�?.."):
             try:
                 r = requests.post(
                     f"{API_BASE}/backtest",
@@ -484,7 +484,7 @@ elif mode == "backtest":
         for col, (l, v) in zip(
             cs,
             [
-                ("总收益", f"{tr:+.2f}%"),
+                ("总收�?, f"{tr:+.2f}%"),
                 ("夏普", str(bt["sharpe"])),
                 ("回撤", f"-{bt['max_drawdown']:.2f}%"),
                 ("交易", str(bt["trade_count"])),
@@ -521,28 +521,28 @@ elif mode == "backtest":
 
 elif mode == "alpha":
     st.markdown("### Alpha 因子选股")
-    st.caption("五因子打分：KDJ · 成交量 · ROE · 市值 · 均线趋势 · 总分100")
-    st.info("≥75分 ⭐⭐重点关注 · 60-74分 ⭐值得关注 · <60分 不推荐")
+    st.caption("五因子打分：KDJ · 成交�?· ROE · 市�?· 均线趋势 · 总分100")
+    st.info("�?5�?⭐⭐重点关注 · 60-74�?⭐值得关注 · <60�?不推�?)
     ac1, ac2, ac3 = st.columns([2, 1, 1])
     with ac1:
-        opts = ["全部（动态股票池）"] + list(SECTORS.keys())
+        opts = ["全部（动态股票池�?] + list(SECTORS.keys())
         sector = st.selectbox("板块", opts)
     with ac2:
         ms = st.slider("最低分", 50, 90, 60)
     with ac3:
         tn = st.slider("数量", 5, 30, 15)
-    if st.button("开始打分 →"):
+    if st.button("开始打�?�?):
         payload = {"min_score": ms, "top_n": tn}
-        if sector != "全部（动态股票池）":
+        if sector != "全部（动态股票池�?:
             payload["sector"] = sector
-        with st.spinner("打分中（约2-5分钟）..."):
+        with st.spinner("打分中（�?-5分钟�?.."):
             try:
                 r = requests.post(f"{API_BASE}/alpha/score", json=payload, timeout=600)
                 if r.status_code == 200:
                     data = r.json()
                     results = data.get("results", [])
                     st.success(
-                        f"完成 · {data['total_scored']}只 · {data['qualified']}只通过"
+                        f"完成 · {data['total_scored']}�?· {data['qualified']}只通过"
                     )
                     if results:
                         rows = []
@@ -555,9 +555,9 @@ elif mode == "alpha":
                                     "总分": x["total_score"],
                                     "评级": x["rating"],
                                     "KDJ": f["kdj"]["score"],
-                                    "成交量": f["volume"]["score"],
+                                    "成交�?: f["volume"]["score"],
                                     "ROE": f["roe"]["score"],
-                                    "市值": f["market_cap"]["score"],
+                                    "市�?: f["market_cap"]["score"],
                                     "趋势": f["trend"]["score"],
                                 }
                             )
@@ -580,14 +580,14 @@ elif mode == "alpha":
 
 elif mode == "scan":
     st.markdown("### 今日买点")
-    st.caption("全市场扫描 · KDJ超卖 · 市值≥300亿")
+    st.caption("全市场扫�?· KDJ超卖 · 市值≥300�?)
     sc1, sc2 = st.columns([2, 1])
     with sc1:
         bs = st.text_input("数据起始日期", "20230101")
     with sc2:
-        tn = st.slider("最多显示", 5, 20, 10)
-    if st.button("开始扫描 →"):
-        with st.spinner("扫描中（约5分钟）..."):
+        tn = st.slider("最多显�?, 5, 20, 10)
+    if st.button("开始扫�?�?):
+        with st.spinner("扫描中（�?分钟�?.."):
             try:
                 r = requests.post(
                     f"{API_BASE}/scan/today",
@@ -598,14 +598,14 @@ elif mode == "scan":
                     data = r.json()
                     recs = data.get("recommendations", [])
                     st.success(
-                        f"候选{data['total_candidates']}只 · 推荐{data['count']}只"
+                        f"候选{data['total_candidates']}�?· 推荐{data['count']}�?
                     )
                     for x in recs:
-                        ic = "🔴" if x["confidence"] == "高" else "🟡"
+                        ic = "🔴" if x["confidence"] == "�? else "🟡"
                         with st.expander(
-                            f"{ic} {x['name']}（{x['code']}）— {x['decision']}"
+                            f"{ic} {x['name']}（{x['code']}）�?{x['decision']}"
                         ):
-                            st.metric("当前价", f"¥{x['close']}")
+                            st.metric("当前�?, f"¥{x['close']}")
                             st.markdown(x["report"])
                 else:
                     st.error(f"扫描失败：{r.json().get('detail','未知')}")
@@ -613,16 +613,16 @@ elif mode == "scan":
                 st.error(f"扫描失败：{e}")
 
 elif mode == "filter":
-    st.markdown("### 板块筛选")
+    st.markdown("### 板块筛�?)
     st.caption("主题景气周期 · PE / ROE 多维评分")
     fc1, fc2, fc3 = st.columns([2, 1, 1])
     with fc1:
         sector = st.selectbox("板块", list(SECTORS.keys()))
     with fc2:
-        ms = st.slider("最低评分", 50, 90, 65)
+        ms = st.slider("最低评�?, 50, 90, 65)
     with fc3:
         tn = st.slider("数量", 3, 10, 5)
-    if st.button("开始筛选 →"):
+    if st.button("开始筛�?�?):
         try:
             r = requests.post(
                 f"{API_BASE}/filter",
@@ -660,8 +660,8 @@ elif mode == "filter":
                         },
                     )
                 else:
-                    st.warning("无股票通过筛选")
+                    st.warning("无股票通过筛�?)
             else:
-                st.error("筛选失败")
+                st.error("筛选失�?)
         except Exception as e:
             st.error(f"筛选失败：{e}")
