@@ -28,17 +28,10 @@ st.markdown(
 [data-testid="stIconMaterial"],.material-symbols-rounded,.material-symbols-outlined,[class*="material-symbols"]{font-family:'Material Symbols Rounded','Material Symbols Outlined'!important;}
 #MainMenu,footer{visibility:hidden;}
 header[data-testid="stHeader"]{background:transparent!important;}
-header [data-testid="stToolbar"]{visibility:hidden;}
-/* 1.59.x 折叠后展开按钮强制显示 */
-[data-testid="stSidebarCollapsedControl"],
-[data-testid="collapsedControl"],
-section[data-testid="stSidebarCollapsedControl"],
-button[aria-label="Open sidebar"],
-button[aria-label="展开侧边栏"]{
-    visibility:visible!important;
-    display:flex!important;
-    opacity:1!important;
-    pointer-events:auto!important;
+/* 展开按钮在stToolbar里，不能藏整个toolbar；只藏右侧动作菜单 */
+[data-testid="stToolbarActions"],[data-testid="stMainMenu"]{visibility:hidden;}
+[data-testid="stExpandSidebarButton"],[data-testid="stSidebarCollapseButton"]{
+    visibility:visible!important;display:flex!important;opacity:1!important;
 }
 .stApp,[data-testid="stAppViewContainer"]{background:#faf9f7!important;}
 [data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;}
