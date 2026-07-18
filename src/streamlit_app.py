@@ -11,95 +11,63 @@ st.set_page_config(
     page_title="AlphaStock",
     page_icon="📈",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 MODEL_OPTIONS = {
     "fast": {"label": "快速", "desc": "DeepSeek V3", "icon": "⚡"},
     "smart": {"label": "精准", "desc": "DeepSeek R1", "icon": "🧠"},
-    "strong": {"label": "强力", "desc": "R1 严格模式", "icon": "🔬"},
+    "strong": {"label": "强力", "desc": "R1 严格", "icon": "🔬"},
 }
 
 st.markdown(
     """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-*, *::before, *::after { font-family: 'Inter','PingFang SC',sans-serif !important; box-sizing:border-box; }
-#MainMenu,footer,header,[data-testid="collapsedControl"],[data-testid="stSidebar"]{display:none!important;visibility:hidden!important;}
-.stApp,[data-testid="stAppViewContainer"],.main{background:#f5f5f3!important;}
-.block-container{padding:0!important;max-width:100%!important;}
+*,*::before,*::after{font-family:'Inter','PingFang SC',sans-serif!important;}
+#MainMenu,footer,header{visibility:hidden;}
+.stApp,[data-testid="stAppViewContainer"]{background:#faf9f7!important;}
+[data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;width:260px!important;}
+[data-testid="stSidebar"] > div{padding-top:12px;}
 
-/* ── 左栏 ── */
-.sidebar-wrap{padding:14px 10px;height:100vh;overflow-y:auto;border-right:1px solid #e5e7eb;}
-.logo-row{display:flex;align-items:center;gap:7px;padding-bottom:12px;margin-bottom:10px;border-bottom:1px solid #eee;}
-.logo-icon{width:24px;height:24px;border-radius:6px;background:#111;color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.logo-text{font-size:13px;font-weight:600;color:#111;letter-spacing:-.3px;}
-.nav-label{font-size:10px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:.08em;padding:8px 2px 3px;}
-.nav-item{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:6px;font-size:12px;color:#374151;cursor:pointer;margin-bottom:2px;}
-.nav-item:hover{background:#f3f4f6;}
-.nav-item.active{background:#f0f9ff;color:#0369a1;font-weight:500;}
-.model-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;color:#374151;margin-bottom:8px;}
-.hist-item{font-size:11px;color:#6b7280;padding:3px 6px;border-radius:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hist-item:hover{background:#f3f4f6;color:#111;}
-.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 0;}
+/* 主区域 */
+.main .block-container{max-width:800px!important;padding:30px 20px 100px!important;}
 
-/* ── 주채팅 영역 ── */
-.chat-area{display:flex;flex-direction:column;height:100vh;}
-.messages-area{flex:1;overflow-y:auto;padding:24px 0 0;}
-.welcome{text-align:center;padding:80px 20px 32px;}
-.welcome-title{font-size:21px;font-weight:600;color:#111;letter-spacing:-.4px;margin-bottom:5px;}
-.welcome-sub{font-size:13px;color:#9ca3af;margin-bottom:22px;}
-.chip-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
-.chip{padding:5px 13px;border-radius:18px;border:1px solid #e5e7eb;background:white;font-size:12px;color:#374151;cursor:pointer;white-space:nowrap;}
-.chip:hover{background:#f9fafb;}
+/* 欢迎 */
+.welcome{text-align:center;padding:100px 20px 30px;}
+.welcome h1{font-size:26px;font-weight:600;color:#1a1a1a;letter-spacing:-.5px;margin-bottom:6px;}
+.welcome p{font-size:13px;color:#9b9b93;}
 
-/* ── 气泡 ── */
-.bubble-u{display:flex;justify-content:flex-end;margin:4px 0 12px;}
-.bubble-u-inner{background:#111;color:white;border-radius:16px 16px 3px 16px;padding:9px 14px;max-width:60%;font-size:13px;line-height:1.6;}
-.bubble-a{display:flex;gap:8px;margin:4px 0 16px;align-items:flex-start;}
-.avatar{width:24px;height:24px;border-radius:50%;background:#111;color:white;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
-.bubble-a-inner{background:white;border:1px solid #e5e7eb;border-radius:3px 14px 14px 14px;padding:11px 15px;max-width:82%;font-size:13px;line-height:1.7;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:12px;font-size:11px;font-weight:600;}
+/* 气泡 */
+.bubble-u{display:flex;justify-content:flex-end;margin:8px 0 14px;}
+.bubble-u div{background:#1a1a1a;color:white;border-radius:18px 18px 4px 18px;padding:10px 15px;max-width:62%;font-size:14px;line-height:1.6;}
+.bubble-a{display:flex;gap:10px;margin:8px 0 18px;align-items:flex-start;}
+.bubble-a .av{width:28px;height:28px;border-radius:50%;background:#1a1a1a;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.bubble-a .txt{background:white;border:1px solid #ebe8e2;border-radius:4px 16px 16px 16px;padding:12px 16px;max-width:84%;font-size:14px;line-height:1.7;color:#1a1a1a;box-shadow:0 1px 3px rgba(0,0,0,.03);}
+.badge{display:inline-flex;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;}
 .badge-buy{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
 .badge-hold{background:#fffbeb;color:#d97706;border:1px solid #fde68a;}
 .badge-sell{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;}
-.attach-tag{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:5px;font-size:11px;color:#0369a1;margin-bottom:4px;}
+.attach{display:inline-flex;gap:5px;padding:3px 9px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;font-size:11px;color:#0369a1;margin-bottom:5px;}
 
-/* ── 输入栏（固定底部）── */
-.input-footer{
-    position:sticky;bottom:0;left:0;right:0;
-    background:linear-gradient(to bottom,rgba(245,245,243,0) 0%,#f5f5f3 30%);
-    padding:12px 0 18px;
-    pointer-events:none;
-}
-.input-card{
-    background:white;
-    border:1px solid #d1d5db;
-    border-radius:16px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-    padding:12px 14px 10px;
-    max-width:680px;
-    margin:0 auto;
-    pointer-events:all;
-}
-.input-bottom-row{display:flex;align-items:center;gap:6px;margin-top:8px;}
-.model-chips{display:flex;gap:4px;}
-.mchip{padding:3px 9px;border-radius:12px;font-size:11px;border:1px solid #e5e7eb;background:white;color:#6b7280;cursor:pointer;white-space:nowrap;}
-.mchip.active{background:#f0f9ff;color:#0369a1;border-color:#bae6fd;font-weight:600;}
-.upload-menu{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:10px;margin:6px auto;max-width:680px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+/* 侧栏元素 */
+.sb-logo{display:flex;align-items:center;gap:8px;padding:4px 4px 12px;}
+.sb-logo .ic{width:26px;height:26px;border-radius:7px;background:#1a1a1a;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.sb-logo .tx{font-size:15px;font-weight:600;color:#1a1a1a;}
+.sb-user{background:white;border:1px solid #e5e2dc;border-radius:10px;padding:8px 10px;font-size:12px;color:#1a1a1a;margin-bottom:4px;}
 
-/* ── Streamlit overrides ── */
-.stTextInput>div>div>input{background:transparent!important;border:none!important;box-shadow:none!important;font-size:13px!important;padding:0!important;color:#111!important;}
-.stTextInput>div>div>input:focus{outline:none!important;box-shadow:none!important;border:none!important;}
-.stTextInput>div{border:none!important;}
-.stButton>button{background:#f3f4f6!important;color:#374151!important;border:1px solid #e5e7eb!important;border-radius:8px!important;font-weight:500!important;font-size:12px!important;padding:5px 12px!important;}
-.stButton>button:hover{background:#e5e7eb!important;}
-.stSelectbox>div>div{background:white!important;border:1px solid #e5e7eb!important;border-radius:7px!important;font-size:12px!important;}
-.stTabs [data-baseweb="tab-list"]{background:transparent!important;border-bottom:1px solid #e5e7eb!important;gap:0!important;}
-.stTabs [data-baseweb="tab"]{background:transparent!important;color:#9ca3af!important;font-size:11px!important;padding:5px 12px!important;}
-.stTabs [aria-selected="true"]{color:#111!important;border-bottom:2px solid #111!important;font-weight:600!important;}
-label{color:#374151!important;font-size:11px!important;font-weight:500!important;}
-div[data-testid="stVerticalBlock"]{gap:0!important;}
+/* chat_input 定制成Claude样式 */
+[data-testid="stChatInput"]{background:white!important;border:1px solid #d8d4cc!important;border-radius:16px!important;box-shadow:0 2px 10px rgba(0,0,0,.06)!important;}
+[data-testid="stChatInput"] textarea{font-size:14px!important;}
+[data-testid="stChatInputSubmitButton"]{background:#e8490f!important;border-radius:50%!important;}
+
+/* 按钮 */
+.stButton>button{background:#f7f5f1!important;color:#3a3a3a!important;border:1px solid #e5e2dc!important;border-radius:8px!important;font-size:12px!important;font-weight:500!important;padding:6px 12px!important;}
+.stButton>button:hover{background:#ebe8e2!important;}
+.stTabs [data-baseweb="tab-list"]{border-bottom:1px solid #ebe8e2!important;}
+.stTabs [data-baseweb="tab"]{color:#9b9b93!important;font-size:11px!important;padding:5px 12px!important;}
+.stTabs [aria-selected="true"]{color:#1a1a1a!important;border-bottom:2px solid #1a1a1a!important;font-weight:600!important;}
+label{font-size:11px!important;color:#3a3a3a!important;}
 </style>
 """,
     unsafe_allow_html=True,
@@ -111,11 +79,13 @@ for k, v in {
     "current_conv": None,
     "mode": "chat",
     "bt_result": None,
-    "_pending_code": None,
-    "selected_model": "smart",
-    "uploaded_file": None,
-    "uploaded_image": None,
-    "show_upload": False,
+    "_pending": None,
+    "model": "smart",
+    "token": None,
+    "username": None,
+    "auth_page": "login",
+    "up_file": None,
+    "up_image": None,
 }.items():
     if k not in st.session_state:
         st.session_state[k] = v
@@ -134,761 +104,564 @@ SECTORS = {
 
 def new_conv():
     cid = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
-    st.session_state.conversations[cid] = {
-        "title": "新对话",
-        "messages": [],
-        "time": datetime.datetime.now().strftime("%H:%M"),
-    }
+    st.session_state.conversations[cid] = {"title": "新对话", "messages": []}
     st.session_state.current_conv = cid
     st.session_state.mode = "chat"
-    st.session_state.uploaded_file = None
-    st.session_state.uploaded_image = None
     return cid
 
 
-def get_messages():
+def get_msgs():
     cid = st.session_state.current_conv
-    if cid and cid in st.session_state.conversations:
-        return st.session_state.conversations[cid]["messages"]
-    return []
+    return (
+        st.session_state.conversations.get(cid, {}).get("messages", []) if cid else []
+    )
 
-
-try:
-    backend_ok = requests.get(f"{API_BASE}/health", timeout=2).status_code == 200
-except:
-    backend_ok = False
 
 # ══════════════════════════════════════════════════════════════════════════
-# 布局：左栏窄 [1] + 右栏宽 [5]
-left, right = st.columns([1, 5])
-
-# ── 左栏（导航）──────────────────────────────────────────────────────────
-with left:
-    st.markdown('<div class="sidebar-wrap">', unsafe_allow_html=True)
+# 登录页（未登录时显示）
+# ══════════════════════════════════════════════════════════════════════════
+if not st.session_state.token:
     st.markdown(
         """
-    <div class="logo-row">
-        <div class="logo-icon">A</div>
-        <div class="logo-text">AlphaStock</div>
+    <div style="text-align:center;padding:80px 20px 30px">
+        <div style="width:56px;height:56px;border-radius:14px;background:#1a1a1a;color:white;
+                    font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;
+                    margin:0 auto 16px">A</div>
+        <div style="font-size:24px;font-weight:600;color:#1a1a1a">AlphaStock</div>
+        <div style="font-size:13px;color:#9b9b93;margin-top:4px">智能投研助手 · 登录后开始使用</div>
     </div>
     """,
         unsafe_allow_html=True,
     )
 
-    if st.button("＋  新对话", use_container_width=True, key="new_conv_btn"):
-        new_conv()
-        st.rerun()
+    _, mid, _ = st.columns([1, 1.4, 1])
+    with mid:
+        tab_login, tab_reg = st.tabs(["登录", "注册"])
 
-    # 当前模型简洁显示
-    cm = st.session_state.selected_model
+        with tab_login:
+            lu = st.text_input("用户名", key="login_user")
+            lp = st.text_input("密码", type="password", key="login_pwd")
+            if st.button("登录", use_container_width=True, key="do_login"):
+                try:
+                    r = requests.post(
+                        f"{API_BASE}/auth/login",
+                        json={"username": lu, "password": lp},
+                        timeout=10,
+                    )
+                    if r.status_code == 200:
+                        d = r.json()
+                        st.session_state.token = d["token"]
+                        st.session_state.username = d["username"]
+                        st.rerun()
+                    else:
+                        st.error(r.json().get("detail", "登录失败"))
+                except Exception as e:
+                    st.error(f"连接失败：{e}")
+
+        with tab_reg:
+            ru = st.text_input("用户名", key="reg_user", help="至少2个字符")
+            rp = st.text_input(
+                "密码", type="password", key="reg_pwd", help="至少4个字符"
+            )
+            if st.button("注册", use_container_width=True, key="do_reg"):
+                try:
+                    r = requests.post(
+                        f"{API_BASE}/auth/register",
+                        json={"username": ru, "password": rp},
+                        timeout=10,
+                    )
+                    if r.status_code == 200:
+                        d = r.json()
+                        st.session_state.token = d["token"]
+                        st.session_state.username = d["username"]
+                        st.rerun()
+                    else:
+                        st.error(r.json().get("detail", "注册失败"))
+                except Exception as e:
+                    st.error(f"连接失败：{e}")
+
+    st.stop()  # 未登录时停在这里，不渲染主界面
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# 已登录：主界面
+# ══════════════════════════════════════════════════════════════════════════
+try:
+    backend_ok = requests.get(f"{API_BASE}/health", timeout=2).status_code == 200
+except:
+    backend_ok = False
+
+# ── 侧栏 ──
+with st.sidebar:
     st.markdown(
-        f"""
-    <div class="model-badge">{MODEL_OPTIONS[cm]['icon']} {MODEL_OPTIONS[cm]['label']} · {MODEL_OPTIONS[cm]['desc']}</div>
+        """
+    <div class="sb-logo"><div class="ic">A</div><div class="tx">AlphaStock</div></div>
     """,
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="nav-label">功能</div>', unsafe_allow_html=True)
-    for key, icon, label in [
-        ("chat", "💬", "股票助手"),
-        ("backtest", "📊", "量化回测"),
-        ("alpha", "🧮", "Alpha选股"),
-        ("scan", "🎯", "今日买点"),
-        ("filter", "🔍", "板块筛选"),
+    if st.button("＋　新对话", use_container_width=True, key="nc"):
+        new_conv()
+        st.rerun()
+
+    # 模型选择
+    st.caption("分析模型")
+    mc1, mc2, mc3 = st.columns(3)
+    for col, mk in zip([mc1, mc2, mc3], MODEL_OPTIONS.keys()):
+        with col:
+            mv = MODEL_OPTIONS[mk]
+            is_cur = st.session_state.model == mk
+            if st.button(
+                f"{mv['icon']}",
+                key=f"m_{mk}",
+                use_container_width=True,
+                help=f"{mv['label']} · {mv['desc']}",
+            ):
+                st.session_state.model = mk
+                st.rerun()
+    cur = MODEL_OPTIONS[st.session_state.model]
+    st.markdown(
+        f'<div style="font-size:11px;color:#9b9b93;text-align:center;margin:-4px 0 8px">{cur["icon"]} {cur["label"]} · {cur["desc"]}</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.caption("功能")
+    for key, label in [
+        ("chat", "💬 股票助手"),
+        ("backtest", "📊 量化回测"),
+        ("alpha", "🧮 Alpha选股"),
+        ("scan", "🎯 今日买点"),
+        ("filter", "🔍 板块筛选"),
     ]:
-        active = "active" if st.session_state.mode == key else ""
-        st.markdown(
-            f'<div class="nav-item {active}">{icon} {label}</div>',
-            unsafe_allow_html=True,
-        )
         if st.button(label, key=f"nav_{key}", use_container_width=True):
             st.session_state.mode = key
             st.rerun()
 
-    st.markdown('<div class="nav-label">历史对话</div>', unsafe_allow_html=True)
+    st.caption("历史对话")
     convs = st.session_state.conversations
     if convs:
         for cid in sorted(convs.keys(), reverse=True)[:6]:
-            t = convs[cid]["title"][:16]
-            if st.button(f"💬 {t}", key=f"hist_{cid}", use_container_width=True):
+            if st.button(
+                f"💬 {convs[cid]['title'][:14]}",
+                key=f"h_{cid}",
+                use_container_width=True,
+            ):
                 st.session_state.current_conv = cid
                 st.session_state.mode = "chat"
                 st.rerun()
     else:
-        st.markdown(
-            '<div style="font-size:11px;color:#ccc;padding:3px 4px">暂无历史</div>',
-            unsafe_allow_html=True,
-        )
+        st.caption("暂无历史")
 
+    # 底部：用户信息 + 登出
+    st.markdown("<div style='flex:1'></div>", unsafe_allow_html=True)
     st.markdown("---")
-    dot_cls = "color:#16a34a" if backend_ok else "color:#dc2626"
-    dot_txt = "● 服务正常" if backend_ok else "● 服务异常"
     st.markdown(
-        f'<div class="status-dot" style="{dot_cls};font-size:11px">{dot_txt}</div>',
+        f'<div class="sb-user">👤 {st.session_state.username}</div>',
         unsafe_allow_html=True,
     )
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ── 右栏（主内容）────────────────────────────────────────────────────────
-with right:
-    mode = st.session_state.mode
-
-    # ── 股票助手 ────────────────────────────────────────────────────────
-    if mode == "chat":
-        messages = get_messages()
-
-        # 欢迎页
-        if not messages:
-            st.markdown(
-                """
-            <div class="welcome">
-                <div class="welcome-title">你好，我是 AlphaStock</div>
-                <div class="welcome-sub">输入股票代码开始分析，或上传财报截图</div>
-                <div class="chip-row">
-                    <div class="chip">600150 中国船舶</div>
-                    <div class="chip">300308 中际旭创</div>
-                    <div class="chip">002261 拓维信息</div>
-                    <div class="chip">601088 中国神华</div>
-                </div>
-            </div>
-            """,
-                unsafe_allow_html=True,
+    dot = "🟢 服务正常" if backend_ok else "🔴 服务异常"
+    st.markdown(
+        f'<div style="font-size:11px;color:#9b9b93;padding:2px 4px">{dot}</div>',
+        unsafe_allow_html=True,
+    )
+    if st.button("登出", use_container_width=True, key="logout"):
+        try:
+            requests.post(
+                f"{API_BASE}/auth/logout",
+                json={"token": st.session_state.token},
+                timeout=5,
             )
+        except:
+            pass
+        st.session_state.token = None
+        st.session_state.username = None
+        st.rerun()
 
-        # 对话历史
-        for msg in messages:
-            if msg["role"] == "user":
-                content = msg["content"]
-                parts = []
-                if msg.get("has_file"):
-                    parts.append(
-                        f'<div class="attach-tag">📎 {msg.get("file_name","附件")}</div>'
-                    )
-                parts.append(
-                    f'<div class="bubble-u"><div class="bubble-u-inner">{content}</div></div>'
-                )
-                st.markdown("".join(parts), unsafe_allow_html=True)
+# ── 主区域 ──
+mode = st.session_state.mode
 
-            elif msg["role"] == "assistant":
-                if msg.get("type") == "analysis":
-                    data = msg.get("data", {})
-                    dtxt = data.get("decision", "")
-                    model_used = msg.get("model", "smart")
-                    badge = (
-                        '<span class="badge badge-buy">🔴 买入</span>'
-                        if "买入" in dtxt
-                        else (
-                            '<span class="badge badge-sell">🟢 减仓</span>'
-                            if ("减仓" in dtxt or "卖出" in dtxt)
-                            else '<span class="badge badge-hold">🟡 观望</span>'
-                        )
-                    )
-                    mi = MODEL_OPTIONS.get(model_used, {})
-                    st.markdown(
-                        f"""
-                    <div class="bubble-a">
-                        <div class="avatar">A</div>
-                        <div style="flex:1;min-width:0">
-                            <div style="font-size:10px;color:#9ca3af;margin-bottom:5px;display:flex;align-items:center;gap:8px">
-                                {data.get('stock_code','')} &nbsp;{badge}
-                                <span style="padding:1px 6px;background:#f5f5f3;border-radius:4px;font-size:10px;color:#9ca3af">
-                                    {mi.get('icon','')} {mi.get('label','')}
-                                </span>
-                            </div>
-                    """,
-                        unsafe_allow_html=True,
-                    )
-                    t1, t2, t3, t4, t5 = st.tabs(
-                        ["💼 决策", "📊 基本面", "📈 技术面", "📰 情绪", "🔬 辩论"]
-                    )
-                    with t1:
-                        st.markdown(dtxt or "暂无")
-                    with t2:
-                        st.markdown(data.get("fundamental_report", "暂无"))
-                    with t3:
-                        st.markdown(data.get("technical_report", "暂无"))
-                    with t4:
-                        st.markdown(data.get("sentiment_report", "暂无"))
-                    with t5:
-                        st.markdown(data.get("researcher_analysis", "暂无"))
-                    st.markdown("</div></div>", unsafe_allow_html=True)
-                else:
-                    st.markdown(
-                        f"""
-                    <div class="bubble-a">
-                        <div class="avatar">A</div>
-                        <div class="bubble-a-inner">{msg["content"]}</div>
-                    </div>""",
-                        unsafe_allow_html=True,
-                    )
-
-        # 处理待分析
-        if st.session_state._pending_code:
-            code = st.session_state._pending_code
-            model = st.session_state.selected_model
-            st.session_state._pending_code = None
-            with st.spinner(f"正在用「{MODEL_OPTIONS[model]['label']}」分析 {code}..."):
-                try:
-                    resp = requests.post(
-                        f"{API_BASE}/analyze",
-                        json={"stock_code": code, "model": model},
-                        timeout=300,
-                    )
-                    cid = st.session_state.current_conv
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        st.session_state.conversations[cid]["messages"].append(
-                            {
-                                "role": "assistant",
-                                "type": "analysis",
-                                "content": "",
-                                "data": data,
-                                "model": model,
-                            }
-                        )
-                        d = data.get("decision", "")
-                        action = (
-                            "买入"
-                            if "买入" in d
-                            else ("减仓" if "减仓" in d else "观望")
-                        )
-                        st.session_state.conversations[cid][
-                            "title"
-                        ] = f"{code}·{action}"
-                    else:
-                        st.session_state.conversations[cid]["messages"].append(
-                            {
-                                "role": "assistant",
-                                "type": "text",
-                                "content": f"分析失败：{resp.json().get('detail','请稍后重试')}",
-                            }
-                        )
-                except Exception as e:
-                    cid = st.session_state.current_conv
-                    if cid:
-                        st.session_state.conversations[cid]["messages"].append(
-                            {
-                                "role": "assistant",
-                                "type": "text",
-                                "content": f"连接失败：{e}",
-                            }
-                        )
-            st.rerun()
-
-        # ── 输入栏（固定底部）──────────────────────────────────────────
-
-        # 上传预览
-        if st.session_state.uploaded_file or st.session_state.uploaded_image:
-            fname = (
-                st.session_state.uploaded_image or st.session_state.uploaded_file
-            ).name
-            p1, p2 = st.columns([9, 1])
-            with p1:
-                st.markdown(
-                    f'<div class="attach-tag">📎 {fname}</div>', unsafe_allow_html=True
-                )
-            with p2:
-                if st.button("✕", key="clear_up"):
-                    st.session_state.uploaded_file = None
-                    st.session_state.uploaded_image = None
-                    st.rerun()
-
-        # 上传弹出菜单
-        if st.session_state.show_upload:
-            st.markdown('<div class="upload-menu">', unsafe_allow_html=True)
-            st.markdown(
-                '<div style="font-size:11px;color:#9ca3af;font-weight:600;margin-bottom:8px">选择上传类型</div>',
-                unsafe_allow_html=True,
-            )
-            up1, up2 = st.columns(2)
-            with up1:
-                st.markdown(
-                    '<div style="font-size:12px;color:#374151;margin-bottom:4px;font-weight:500">📷 图片</div>',
-                    unsafe_allow_html=True,
-                )
-                st.caption("财报截图、K线图")
-                img_up = st.file_uploader(
-                    "图片",
-                    type=["png", "jpg", "jpeg", "webp"],
-                    key="img_up",
-                    label_visibility="collapsed",
-                )
-                if img_up:
-                    st.session_state.uploaded_image = img_up
-                    st.session_state.show_upload = False
-                    st.rerun()
-            with up2:
-                st.markdown(
-                    '<div style="font-size:12px;color:#374151;margin-bottom:4px;font-weight:500">📎 文件</div>',
-                    unsafe_allow_html=True,
-                )
-                st.caption("PDF、Word、CSV")
-                file_up = st.file_uploader(
-                    "文件",
-                    type=["pdf", "txt", "csv", "xlsx"],
-                    key="file_up",
-                    label_visibility="collapsed",
-                )
-                if file_up:
-                    st.session_state.uploaded_file = file_up
-                    st.session_state.show_upload = False
-                    st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
-
-        # 主输入卡片
+if mode == "chat":
+    msgs = get_msgs()
+    if not msgs:
         st.markdown(
-            '<div class="input-footer"><div class="input-card">', unsafe_allow_html=True
+            """
+        <div class="welcome">
+            <h1>你好，我是 AlphaStock</h1>
+            <p>输入股票代码开始分析，或上传财报截图</p>
+        </div>
+        """,
+            unsafe_allow_html=True,
         )
+        cc = st.columns(4)
+        for col, (code, name) in zip(
+            cc,
+            [
+                ("600150", "中国船舶"),
+                ("300308", "中际旭创"),
+                ("002261", "拓维信息"),
+                ("601088", "中国神华"),
+            ],
+        ):
+            with col:
+                if st.button(
+                    f"{code}\n{name}", key=f"chip_{code}", use_container_width=True
+                ):
+                    if not st.session_state.current_conv:
+                        new_conv()
+                    st.session_state._pending = code
+                    st.rerun()
 
-        user_input = st.text_input(
-            "input",
-            label_visibility="collapsed",
-            placeholder="输入股票代码（如 600150）或直接提问...",
-            key="chat_input",
-        )
-
-        # 底部行：+ | 模型切换 | 发送
-        bc1, bc2, bc3 = st.columns([1, 7, 1])
-        with bc1:
-            if st.button("＋", key="plus_btn"):
-                st.session_state.show_upload = not st.session_state.show_upload
-                st.rerun()
-        with bc2:
-            # 模型切换（三个小按钮，不嵌套columns）
-            cur_m = st.session_state.selected_model
-            chips_html = '<div class="model-chips">'
-            for mk, mv in MODEL_OPTIONS.items():
-                active_cls = "active" if mk == cur_m else ""
-                chips_html += f'<span class="mchip {active_cls}">{mv["icon"]} {mv["label"]}</span>'
-            chips_html += "</div>"
-            st.markdown(chips_html, unsafe_allow_html=True)
-            # 实际切换按钮（隐藏在HTML下方）
-            m1, m2, m3 = st.columns(3)
-            for col, mk in zip([m1, m2, m3], MODEL_OPTIONS.keys()):
-                with col:
-                    mv = MODEL_OPTIONS[mk]
-                    if st.button(f"{mv['icon']}{mv['label']}", key=f"m_{mk}"):
-                        st.session_state.selected_model = mk
-                        st.rerun()
-        with bc3:
-            send = st.button("↑", key="send_btn")
-
-        st.markdown("</div></div>", unsafe_allow_html=True)
-
-        # 发送逻辑
-        if send and user_input.strip():
-            txt = user_input.strip()
-            if not st.session_state.current_conv:
-                new_conv()
-            cid = st.session_state.current_conv
-            has_file = bool(
-                st.session_state.uploaded_file or st.session_state.uploaded_image
-            )
-            file_name = (
-                (st.session_state.uploaded_image or st.session_state.uploaded_file).name
-                if has_file
+    # 渲染消息
+    for m in msgs:
+        if m["role"] == "user":
+            pre = (
+                f'<div class="attach">📎 {m.get("file_name","")}</div>'
+                if m.get("has_file")
                 else ""
             )
+            st.markdown(
+                f'{pre}<div class="bubble-u"><div>{m["content"]}</div></div>',
+                unsafe_allow_html=True,
+            )
+        elif m["role"] == "assistant":
+            if m.get("type") == "analysis":
+                data = m.get("data", {})
+                dtxt = data.get("decision", "")
+                badge = (
+                    '<span class="badge badge-buy">🔴 买入</span>'
+                    if "买入" in dtxt
+                    else (
+                        '<span class="badge badge-sell">🟢 减仓</span>'
+                        if ("减仓" in dtxt or "卖出" in dtxt)
+                        else '<span class="badge badge-hold">🟡 观望</span>'
+                    )
+                )
+                mi = MODEL_OPTIONS.get(m.get("model", "smart"), {})
+                st.markdown(
+                    f'<div class="bubble-a"><div class="av">A</div><div style="flex:1;min-width:0"><div style="font-size:10px;color:#9b9b93;margin-bottom:6px">{data.get("stock_code","")} &nbsp;{badge} &nbsp;<span style="padding:1px 6px;background:#f0eee9;border-radius:4px">{mi.get("icon","")} {mi.get("label","")}</span></div>',
+                    unsafe_allow_html=True,
+                )
+                t1, t2, t3, t4, t5 = st.tabs(
+                    ["💼 决策", "📊 基本面", "📈 技术面", "📰 情绪", "🔬 辩论"]
+                )
+                with t1:
+                    st.markdown(dtxt or "暂无")
+                with t2:
+                    st.markdown(data.get("fundamental_report", "暂无"))
+                with t3:
+                    st.markdown(data.get("technical_report", "暂无"))
+                with t4:
+                    st.markdown(data.get("sentiment_report", "暂无"))
+                with t5:
+                    st.markdown(data.get("researcher_analysis", "暂无"))
+                st.markdown("</div></div>", unsafe_allow_html=True)
+            else:
+                st.markdown(
+                    f'<div class="bubble-a"><div class="av">A</div><div class="txt">{m["content"]}</div></div>',
+                    unsafe_allow_html=True,
+                )
+
+    # 处理待分析
+    if st.session_state._pending:
+        code = st.session_state._pending
+        model = st.session_state.model
+        st.session_state._pending = None
+        if not st.session_state.current_conv:
+            new_conv()
+        cid = st.session_state.current_conv
+        # 记录用户消息（如果还没记录）
+        if not msgs or msgs[-1].get("content", "") != code:
+            st.session_state.conversations[cid]["messages"].append(
+                {"role": "user", "content": f"分析 {code}"}
+            )
+        with st.spinner(f"正在用「{MODEL_OPTIONS[model]['label']}」分析 {code}..."):
+            try:
+                r = requests.post(
+                    f"{API_BASE}/analyze",
+                    json={
+                        "stock_code": code,
+                        "model": model,
+                        "token": st.session_state.token,
+                    },
+                    timeout=300,
+                )
+                if r.status_code == 200:
+                    data = r.json()
+                    st.session_state.conversations[cid]["messages"].append(
+                        {
+                            "role": "assistant",
+                            "type": "analysis",
+                            "data": data,
+                            "model": model,
+                        }
+                    )
+                    d = data.get("decision", "")
+                    act = "买入" if "买入" in d else ("减仓" if "减仓" in d else "观望")
+                    st.session_state.conversations[cid]["title"] = f"{code}·{act}"
+                else:
+                    st.session_state.conversations[cid]["messages"].append(
+                        {
+                            "role": "assistant",
+                            "type": "text",
+                            "content": f"分析失败：{r.json().get('detail','重试')}",
+                        }
+                    )
+            except Exception as e:
+                st.session_state.conversations[cid]["messages"].append(
+                    {"role": "assistant", "type": "text", "content": f"连接失败：{e}"}
+                )
+        st.rerun()
+
+    # ── 原生chat_input（自动固定底部，Claude样式）──
+    prompt = st.chat_input("输入股票代码（如 600150）或直接提问...")
+    if prompt:
+        if not st.session_state.current_conv:
+            new_conv()
+        cid = st.session_state.current_conv
+        st.session_state.conversations[cid]["messages"].append(
+            {"role": "user", "content": prompt}
+        )
+        codes = re.findall(r"\b\d{6}\b", prompt)
+        if codes:
+            st.session_state._pending = codes[0]
+        else:
             st.session_state.conversations[cid]["messages"].append(
                 {
-                    "role": "user",
-                    "content": txt,
-                    "has_file": has_file,
-                    "file_name": file_name,
+                    "role": "assistant",
+                    "type": "text",
+                    "content": "请输入6位股票代码，例如 <b>600150</b>（中国船舶）",
                 }
             )
-            codes = re.findall(r"\b\d{6}\b", txt)
-            if codes:
-                st.session_state._pending_code = codes[0]
-            else:
-                st.session_state.conversations[cid]["messages"].append(
-                    {
-                        "role": "assistant",
-                        "type": "text",
-                        "content": "请输入6位股票代码进行分析，例如 <b>600150</b>（中国船舶）",
-                    }
-                )
-            st.session_state.uploaded_file = None
-            st.session_state.uploaded_image = None
-            st.session_state.show_upload = False
-            st.rerun()
+        st.rerun()
 
-    # ── 量化回测 ────────────────────────────────────────────────────────
-    elif mode == "backtest":
-        st.markdown('<div style="padding:24px 0 0">', unsafe_allow_html=True)
-        st.markdown(
-            '<div style="font-size:18px;font-weight:600;color:#111;letter-spacing:-.3px">量化回测</div>',
-            unsafe_allow_html=True,
+elif mode == "backtest":
+    st.markdown("### 量化回测")
+    st.caption("KDJ / RSI / 布林带 · Backtrader")
+    c1, c2, c3, c4 = st.columns([1.2, 1.5, 0.9, 0.9])
+    with c1:
+        code = st.text_input("股票代码", "600150")
+    with c2:
+        strat = st.selectbox(
+            "策略",
+            ["kdj_oversold", "j_extreme", "rsi", "boll", "kdj_macd"],
+            format_func=lambda x: {
+                "kdj_oversold": "KDJ超卖",
+                "j_extreme": "J极值",
+                "rsi": "RSI超卖",
+                "boll": "布林带",
+                "kdj_macd": "KDJ+MACD",
+            }[x],
         )
-        st.markdown(
-            '<div style="font-size:12px;color:#9ca3af;margin-bottom:16px">KDJ / RSI / 布林带 · Backtrader</div>',
-            unsafe_allow_html=True,
-        )
-
-        c1, c2, c3, c4 = st.columns([1.2, 1.5, 0.9, 0.9])
-        with c1:
-            code = st.text_input("股票代码", "600150", key="bt_code")
-        with c2:
-            strat = st.selectbox(
-                "策略",
-                ["kdj_oversold", "j_extreme", "rsi", "boll", "kdj_macd"],
-                format_func=lambda x: {
-                    "kdj_oversold": "KDJ超卖",
-                    "j_extreme": "J极值",
-                    "rsi": "RSI超卖",
-                    "boll": "布林带",
-                    "kdj_macd": "KDJ+MACD",
-                }[x],
-            )
-        with c3:
-            sd = st.text_input("开始", "20240101")
-        with c4:
-            ed = st.text_input("结束", "20260530")
-
-        if st.button("开始回测 →", key="bt_run"):
-            with st.spinner("回测中..."):
-                try:
-                    resp = requests.post(
-                        f"{API_BASE}/backtest",
-                        json={
-                            "stock_code": code,
-                            "strategy": strat,
-                            "start_date": sd,
-                            "end_date": ed,
-                            "initial_cash": 100000,
-                        },
-                        timeout=120,
-                    )
-                    if resp.status_code == 200:
-                        st.session_state.bt_result = resp.json()
-                        st.rerun()
-                    else:
-                        st.error(f"回测失败：{resp.json().get('detail','未知')}")
-                except Exception as e:
-                    st.error(f"请求失败：{e}")
-
-        bt = st.session_state.bt_result
-        if bt:
-            tr = bt["total_return"]
-            cols = st.columns(5)
-            for col, (lbl, val, cls) in zip(
-                cols,
-                [
-                    ("总收益率", f"{tr:+.2f}%", "up" if tr > 0 else "down"),
-                    ("夏普比率", str(bt["sharpe"]), ""),
-                    ("最大回撤", f"-{bt['max_drawdown']:.2f}%", "down"),
-                    ("交易次数", str(bt["trade_count"]), ""),
-                    (
-                        "胜率",
-                        f"{bt['win_rate']}%",
-                        "up" if bt["win_rate"] > 50 else "down",
-                    ),
-                ],
-            ):
-                with col:
-                    color = (
-                        "#dc2626"
-                        if cls == "up"
-                        else ("#10b981" if cls == "down" else "#111")
-                    )
-                    st.markdown(
-                        f"""
-                    <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:10px 12px;text-align:center">
-                        <div style="font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase">{lbl}</div>
-                        <div style="font-size:17px;font-weight:700;color:{color};font-family:monospace">{val}</div>
-                    </div>""",
-                        unsafe_allow_html=True,
-                    )
-
-            if bt.get("returns_data") and bt.get("dates_data"):
-                cum = (
-                    (
-                        1 + pd.Series(bt["returns_data"], index=bt["dates_data"])
-                    ).cumprod()
-                    - 1
-                ) * 100
-                fig = go.Figure()
-                fig.add_trace(
-                    go.Scatter(
-                        x=cum.index,
-                        y=cum.values,
-                        mode="lines",
-                        line=dict(color="#111827", width=1.6),
-                        fill="tozeroy",
-                        fillcolor="rgba(17,24,39,0.04)",
-                    )
-                )
-                fig.add_hline(y=0, line_dash="dot", line_color="#e5e7eb")
-                fig.update_layout(
-                    paper_bgcolor="white",
-                    plot_bgcolor="white",
-                    font=dict(family="Inter", color="#9ca3af", size=11),
-                    xaxis=dict(gridcolor="#f9fafb", linecolor="#e5e7eb"),
-                    yaxis=dict(
-                        gridcolor="#f9fafb", ticksuffix="%", linecolor="#e5e7eb"
-                    ),
-                    height=220,
-                    margin=dict(l=44, r=16, t=8, b=32),
-                    showlegend=False,
-                )
-                st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.markdown(
-                '<div style="text-align:center;padding:50px;color:#9ca3af;font-size:13px">填写参数，点击「开始回测」</div>',
-                unsafe_allow_html=True,
-            )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ── Alpha选股 ────────────────────────────────────────────────────────
-    elif mode == "alpha":
-        st.markdown('<div style="padding:24px 0 0">', unsafe_allow_html=True)
-        st.markdown(
-            '<div style="font-size:18px;font-weight:600;color:#111">Alpha 因子选股</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div style="font-size:12px;color:#9ca3af;margin-bottom:4px">五因子打分：KDJ · 成交量 · ROE · 市值 · 均线趋势 · 总分100</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;font-size:12px;color:#92400e;margin-bottom:14px">≥75分 ⭐⭐重点关注 · 60-74分 ⭐值得关注 · &lt;60分 不推荐</div>',
-            unsafe_allow_html=True,
-        )
-
-        ac1, ac2, ac3 = st.columns([2, 1, 1])
-        with ac1:
-            sector_opts = ["全部（动态股票池）"] + list(SECTORS.keys())
-            sector = st.selectbox("板块", sector_opts, key="alpha_sector")
-        with ac2:
-            min_score = st.slider("最低分", 50, 90, 60, key="alpha_min")
-        with ac3:
-            top_n = st.slider("数量", 5, 30, 15, key="alpha_top")
-
-        if st.button("开始打分 →", key="alpha_run"):
-            payload = {"min_score": min_score, "top_n": top_n}
-            if sector != "全部（动态股票池）":
-                payload["sector"] = sector
-            with st.spinner("打分中（约2-5分钟）..."):
-                try:
-                    resp = requests.post(
-                        f"{API_BASE}/alpha/score", json=payload, timeout=600
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        results = data.get("results", [])
-                        st.success(
-                            f"完成 · {data['total_scored']}只 · {data['qualified']}只通过"
-                        )
-                        if results:
-                            rows = []
-                            for r in results:
-                                f = r["factors"]
-                                rows.append(
-                                    {
-                                        "代码": r["stock_code"],
-                                        "名称": r["stock_name"],
-                                        "总分": r["total_score"],
-                                        "评级": r["rating"],
-                                        "KDJ": f["kdj"]["score"],
-                                        "成交量": f["volume"]["score"],
-                                        "ROE": f["roe"]["score"],
-                                        "市值": f["market_cap"]["score"],
-                                        "趋势": f["trend"]["score"],
-                                    }
-                                )
-                            st.dataframe(
-                                pd.DataFrame(rows),
-                                use_container_width=True,
-                                hide_index=True,
-                                column_config={
-                                    "总分": st.column_config.ProgressColumn(
-                                        "总分", min_value=0, max_value=100, format="%d"
-                                    )
-                                },
-                            )
-                            for r in results[:8]:
-                                sc = r["total_score"]
-                                icon = "⭐⭐" if sc >= 75 else "⭐"
-                                with st.expander(
-                                    f"{icon} {r['stock_name']}（{r['stock_code']}）— {sc:.0f}分"
-                                ):
-                                    f = r["factors"]
-                                    fc = st.columns(5)
-                                    for ci, (fn, fk) in enumerate(
-                                        zip(
-                                            ["KDJ", "成交量", "ROE", "市值", "趋势"],
-                                            [
-                                                "kdj",
-                                                "volume",
-                                                "roe",
-                                                "market_cap",
-                                                "trend",
-                                            ],
-                                        )
-                                    ):
-                                        with fc[ci]:
-                                            fs = f[fk]["score"]
-                                            color = (
-                                                "#16a34a"
-                                                if fs >= 15
-                                                else (
-                                                    "#d97706" if fs >= 8 else "#dc2626"
-                                                )
-                                            )
-                                            st.markdown(
-                                                f"""<div style="text-align:center;padding:6px;background:white;border:1px solid #e5e7eb;border-radius:6px">
-                                                <div style="font-size:10px;color:#9ca3af">{fn}</div>
-                                                <div style="font-size:16px;font-weight:700;color:{color}">{fs}</div>
-                                                <div style="font-size:9px;color:#bbb">/20</div></div>""",
-                                                unsafe_allow_html=True,
-                                            )
-                                    for fn, fk in zip(
-                                        ["KDJ", "成交量", "ROE", "市值", "趋势"],
-                                        ["kdj", "volume", "roe", "market_cap", "trend"],
-                                    ):
-                                        st.caption(f"{fn}: {f[fk]['detail']}")
-                                    if st.button(
-                                        f"深度分析 {r['stock_code']} →",
-                                        key=f"aa_{r['stock_code']}",
-                                    ):
-                                        if not st.session_state.current_conv:
-                                            new_conv()
-                                        cid = st.session_state.current_conv
-                                        st.session_state.conversations[cid][
-                                            "messages"
-                                        ].append(
-                                            {
-                                                "role": "user",
-                                                "content": f"Alpha{sc:.0f}分，深度分析{r['stock_code']}",
-                                            }
-                                        )
-                                        st.session_state._pending_code = r["stock_code"]
-                                        st.session_state.mode = "chat"
-                                        st.rerun()
-                    else:
-                        st.error(f"失败：{resp.json().get('detail','未知')}")
-                except Exception as e:
-                    st.error(f"请求失败：{e}")
-        else:
-            st.markdown(
-                '<div style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">选择板块，点击「开始打分」</div>',
-                unsafe_allow_html=True,
-            )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ── 今日买点 ────────────────────────────────────────────────────────
-    elif mode == "scan":
-        st.markdown('<div style="padding:24px 0 0">', unsafe_allow_html=True)
-        st.markdown(
-            '<div style="font-size:18px;font-weight:600;color:#111">今日买点</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div style="font-size:12px;color:#9ca3af;margin-bottom:16px">全市场扫描 · KDJ超卖 · 市值≥300亿</div>',
-            unsafe_allow_html=True,
-        )
-        sc1, sc2 = st.columns([2, 1])
-        with sc1:
-            bs = st.text_input("数据起始日期", "20230101")
-        with sc2:
-            tn = st.slider("最多显示", 5, 20, 10)
-        if st.button("开始扫描 →", key="scan_run"):
-            with st.spinner("扫描中（约5分钟）..."):
-                try:
-                    resp = requests.post(
-                        f"{API_BASE}/scan/today",
-                        json={"base_start": bs, "top_n": tn},
-                        timeout=600,
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        recs = data.get("recommendations", [])
-                        st.success(
-                            f"扫描完成 · 候选{data['total_candidates']}只 · 推荐{data['count']}只"
-                        )
-                        for r in recs:
-                            icon = "🔴" if r["confidence"] == "高" else "🟡"
-                            with st.expander(
-                                f"{icon} {r['name']}（{r['code']}）— {r['decision']}"
-                            ):
-                                ca, cb = st.columns([1, 2])
-                                with ca:
-                                    st.metric("当前价", f"¥{r['close']}")
-                                with cb:
-                                    st.markdown(r["report"])
-                    else:
-                        st.error(f"扫描失败：{resp.json().get('detail','未知')}")
-                except Exception as e:
-                    st.error(f"扫描失败：{e}")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ── 板块筛选 ────────────────────────────────────────────────────────
-    elif mode == "filter":
-        st.markdown('<div style="padding:24px 0 0">', unsafe_allow_html=True)
-        st.markdown(
-            '<div style="font-size:18px;font-weight:600;color:#111">板块筛选</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            '<div style="font-size:12px;color:#9ca3af;margin-bottom:16px">主题景气周期 · PE / ROE 多维评分</div>',
-            unsafe_allow_html=True,
-        )
-        fc1, fc2, fc3 = st.columns([2, 1, 1])
-        with fc1:
-            sector = st.selectbox("板块", list(SECTORS.keys()), key="filter_sector")
-        with fc2:
-            min_score = st.slider("最低评分", 50, 90, 65, key="filter_min")
-        with fc3:
-            top_n = st.slider("数量", 3, 10, 5, key="filter_top")
-        if st.button("开始筛选 →", key="filter_run"):
+    with c3:
+        sd = st.text_input("开始", "20240101")
+    with c4:
+        ed = st.text_input("结束", "20260530")
+    if st.button("开始回测 →"):
+        with st.spinner("回测中..."):
             try:
-                stocks = SECTORS.get(sector, {})
-                resp = requests.post(
-                    f"{API_BASE}/filter",
+                r = requests.post(
+                    f"{API_BASE}/backtest",
                     json={
-                        "sector": sector,
-                        "stocks": stocks,
-                        "min_score": min_score,
-                        "top_n": top_n,
+                        "stock_code": code,
+                        "strategy": strat,
+                        "start_date": sd,
+                        "end_date": ed,
+                        "initial_cash": 100000,
                     },
-                    timeout=60,
+                    timeout=120,
                 )
-                if resp.status_code == 200:
-                    results = resp.json().get("results", [])
+                if r.status_code == 200:
+                    st.session_state.bt_result = r.json()
+                    st.rerun()
+                else:
+                    st.error(f"回测失败：{r.json().get('detail','未知')}")
+            except Exception as e:
+                st.error(f"请求失败：{e}")
+    bt = st.session_state.bt_result
+    if bt:
+        tr = bt["total_return"]
+        cs = st.columns(5)
+        for col, (l, v) in zip(
+            cs,
+            [
+                ("总收益", f"{tr:+.2f}%"),
+                ("夏普", str(bt["sharpe"])),
+                ("回撤", f"-{bt['max_drawdown']:.2f}%"),
+                ("交易", str(bt["trade_count"])),
+                ("胜率", f"{bt['win_rate']}%"),
+            ],
+        ):
+            with col:
+                st.metric(l, v)
+        if bt.get("returns_data") and bt.get("dates_data"):
+            cum = (
+                (1 + pd.Series(bt["returns_data"], index=bt["dates_data"])).cumprod()
+                - 1
+            ) * 100
+            fig = go.Figure(
+                go.Scatter(
+                    x=cum.index,
+                    y=cum.values,
+                    mode="lines",
+                    line=dict(color="#1a1a1a", width=1.6),
+                    fill="tozeroy",
+                    fillcolor="rgba(26,26,26,.04)",
+                )
+            )
+            fig.update_layout(
+                paper_bgcolor="white",
+                plot_bgcolor="white",
+                height=220,
+                margin=dict(l=44, r=16, t=8, b=32),
+                showlegend=False,
+                yaxis=dict(ticksuffix="%", gridcolor="#f5f5f3"),
+                xaxis=dict(gridcolor="#f5f5f3"),
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+elif mode == "alpha":
+    st.markdown("### Alpha 因子选股")
+    st.caption("五因子打分：KDJ · 成交量 · ROE · 市值 · 均线趋势 · 总分100")
+    st.info("≥75分 ⭐⭐重点关注 · 60-74分 ⭐值得关注 · <60分 不推荐")
+    ac1, ac2, ac3 = st.columns([2, 1, 1])
+    with ac1:
+        opts = ["全部（动态股票池）"] + list(SECTORS.keys())
+        sector = st.selectbox("板块", opts)
+    with ac2:
+        ms = st.slider("最低分", 50, 90, 60)
+    with ac3:
+        tn = st.slider("数量", 5, 30, 15)
+    if st.button("开始打分 →"):
+        payload = {"min_score": ms, "top_n": tn}
+        if sector != "全部（动态股票池）":
+            payload["sector"] = sector
+        with st.spinner("打分中（约2-5分钟）..."):
+            try:
+                r = requests.post(f"{API_BASE}/alpha/score", json=payload, timeout=600)
+                if r.status_code == 200:
+                    data = r.json()
+                    results = data.get("results", [])
+                    st.success(
+                        f"完成 · {data['total_scored']}只 · {data['qualified']}只通过"
+                    )
                     if results:
-                        df = pd.DataFrame(
-                            [
+                        rows = []
+                        for x in results:
+                            f = x["factors"]
+                            rows.append(
                                 {
-                                    "代码": r["code"],
-                                    "名称": r["name"],
-                                    "评分": r["score"],
-                                    "PE": f"{r['pe']:.1f}" if r.get("pe") else "N/A",
-                                    "ROE": (
-                                        f"{r['roe']:.1f}%" if r.get("roe") else "N/A"
-                                    ),
+                                    "代码": x["stock_code"],
+                                    "名称": x["stock_name"],
+                                    "总分": x["total_score"],
+                                    "评级": x["rating"],
+                                    "KDJ": f["kdj"]["score"],
+                                    "成交量": f["volume"]["score"],
+                                    "ROE": f["roe"]["score"],
+                                    "市值": f["market_cap"]["score"],
+                                    "趋势": f["trend"]["score"],
                                 }
-                                for r in results
-                            ]
-                        )
+                            )
                         st.dataframe(
-                            df,
+                            pd.DataFrame(rows),
                             use_container_width=True,
                             hide_index=True,
                             column_config={
-                                "评分": st.column_config.ProgressColumn(
-                                    "评分", min_value=0, max_value=100
+                                "总分": st.column_config.ProgressColumn(
+                                    "总分", min_value=0, max_value=100, format="%d"
                                 )
                             },
                         )
                     else:
-                        st.warning("没有股票通过筛选条件")
+                        st.warning("无股票通过门槛")
                 else:
-                    st.error("筛选失败")
+                    st.error(f"失败：{r.json().get('detail','未知')}")
             except Exception as e:
-                st.error(f"筛选失败：{e}")
-        else:
-            st.markdown(
-                '<div style="text-align:center;padding:40px;color:#9ca3af;font-size:13px">选择板块，点击「开始筛选」</div>',
-                unsafe_allow_html=True,
+                st.error(f"请求失败：{e}")
+
+elif mode == "scan":
+    st.markdown("### 今日买点")
+    st.caption("全市场扫描 · KDJ超卖 · 市值≥300亿")
+    sc1, sc2 = st.columns([2, 1])
+    with sc1:
+        bs = st.text_input("数据起始日期", "20230101")
+    with sc2:
+        tn = st.slider("最多显示", 5, 20, 10)
+    if st.button("开始扫描 →"):
+        with st.spinner("扫描中（约5分钟）..."):
+            try:
+                r = requests.post(
+                    f"{API_BASE}/scan/today",
+                    json={"base_start": bs, "top_n": tn},
+                    timeout=600,
+                )
+                if r.status_code == 200:
+                    data = r.json()
+                    recs = data.get("recommendations", [])
+                    st.success(
+                        f"候选{data['total_candidates']}只 · 推荐{data['count']}只"
+                    )
+                    for x in recs:
+                        ic = "🔴" if x["confidence"] == "高" else "🟡"
+                        with st.expander(
+                            f"{ic} {x['name']}（{x['code']}）— {x['decision']}"
+                        ):
+                            st.metric("当前价", f"¥{x['close']}")
+                            st.markdown(x["report"])
+                else:
+                    st.error(f"扫描失败：{r.json().get('detail','未知')}")
+            except Exception as e:
+                st.error(f"扫描失败：{e}")
+
+elif mode == "filter":
+    st.markdown("### 板块筛选")
+    st.caption("主题景气周期 · PE / ROE 多维评分")
+    fc1, fc2, fc3 = st.columns([2, 1, 1])
+    with fc1:
+        sector = st.selectbox("板块", list(SECTORS.keys()))
+    with fc2:
+        ms = st.slider("最低评分", 50, 90, 65)
+    with fc3:
+        tn = st.slider("数量", 3, 10, 5)
+    if st.button("开始筛选 →"):
+        try:
+            r = requests.post(
+                f"{API_BASE}/filter",
+                json={
+                    "sector": sector,
+                    "stocks": SECTORS.get(sector, {}),
+                    "min_score": ms,
+                    "top_n": tn,
+                },
+                timeout=60,
             )
-        st.markdown("</div>", unsafe_allow_html=True)
+            if r.status_code == 200:
+                results = r.json().get("results", [])
+                if results:
+                    df = pd.DataFrame(
+                        [
+                            {
+                                "代码": x["code"],
+                                "名称": x["name"],
+                                "评分": x["score"],
+                                "PE": f"{x['pe']:.1f}" if x.get("pe") else "N/A",
+                                "ROE": f"{x['roe']:.1f}%" if x.get("roe") else "N/A",
+                            }
+                            for x in results
+                        ]
+                    )
+                    st.dataframe(
+                        df,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config={
+                            "评分": st.column_config.ProgressColumn(
+                                "评分", min_value=0, max_value=100
+                            )
+                        },
+                    )
+                else:
+                    st.warning("无股票通过筛选")
+            else:
+                st.error("筛选失败")
+        except Exception as e:
+            st.error(f"筛选失败：{e}")
