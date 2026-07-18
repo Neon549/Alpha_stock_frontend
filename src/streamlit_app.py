@@ -27,10 +27,19 @@ st.markdown(
 *:not([data-testid="stIconMaterial"]):not(.material-symbols-rounded):not(.material-symbols-outlined):not([class*="material-symbols"]):not(i){font-family:'Inter','PingFang SC',sans-serif;}
 [data-testid="stIconMaterial"],.material-symbols-rounded,.material-symbols-outlined,[class*="material-symbols"]{font-family:'Material Symbols Rounded','Material Symbols Outlined'!important;}
 #MainMenu,footer{visibility:hidden;}
-/* header保留但透明化，只留侧边栏展开按钮 */
 header[data-testid="stHeader"]{background:transparent!important;}
 header [data-testid="stToolbar"]{visibility:hidden;}
-[data-testid="stSidebarCollapsedControl"]{visibility:visible!important;display:flex!important;}
+/* 1.59.x 折叠后展开按钮强制显示 */
+[data-testid="stSidebarCollapsedControl"],
+[data-testid="collapsedControl"],
+section[data-testid="stSidebarCollapsedControl"],
+button[aria-label="Open sidebar"],
+button[aria-label="展开侧边栏"]{
+    visibility:visible!important;
+    display:flex!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+}
 .stApp,[data-testid="stAppViewContainer"]{background:#faf9f7!important;}
 [data-testid="stSidebar"]{background:#f0eee9!important;border-right:1px solid #e5e2dc!important;}
 [data-testid="stSidebar"] > div:first-child{padding-top:12px;}
