@@ -95,6 +95,27 @@ button[kind="header"]{display:flex!important;visibility:visible!important;}
     unsafe_allow_html=True,
 )
 
+# ── 侧边栏默认展开（加载时若收起则自动点展开按钮）──
+import streamlit.components.v1 as components
+
+components.html(
+    """
+<script>
+const doc = window.parent.document;
+let tries = 0;
+const t = setInterval(() => {
+    tries++;
+    const sidebar = doc.querySelector('[data-testid="stSidebar"]');
+    const expandBtn = doc.querySelector('[data-testid="stExpandSidebarButton"]');
+    if (sidebar && sidebar.getAttribute('aria-expanded') !== 'false') { clearInterval(t); return; }
+    if (expandBtn) { expandBtn.click(); clearInterval(t); return; }
+    if (tries > 20) clearInterval(t);
+}, 150);
+</script>
+""",
+    height=0,
+)
+
 # ── Session State ──────────────────────────────────────────────────────────
 for k, v in {
     "conversations": {},
@@ -434,61 +455,30 @@ if mode == "chat":
                 )
         st.rerun()
 
-    # ── 多模态上传（+ 按钮）──
-    with st.expander("📎 上传文件 / 图片", expanded=False):
-        up_col1, up_col2 = st.columns(2)
-        with up_col1:
-            uploaded_img = st.file_uploader(
-                "上传截图 / 财报图片",
-                type=["png", "jpg", "jpeg", "webp"],
-                key="uploader_img",
-                label_visibility="collapsed",
-            )
-            if uploaded_img:
-                st.session_state.up_image = uploaded_img
-                st.image(uploaded_img, width=180)
-                st.caption(f"📷 {uploaded_img.name}")
-        with up_col2:
-            uploaded_file = st.file_uploader(
-                "上传 PDF / CSV",
-                type=["pdf", "csv", "txt"],
-                key="uploader_file",
-                label_visibility="collapsed",
-            )
-            if uploaded_file:
-                st.session_state.up_file = uploaded_file
-                st.caption(f"📄 {uploaded_file.name} · 已就绪")
-        if st.session_state.up_image or st.session_state.up_file:
-            if st.button("🗑 清除附件", key="clear_attach"):
-                st.session_state.up_image = None
-                st.session_state.up_file = None
-                st.rerun()
-
-    # ── 原生chat_input（自动固定底部，Claude样式）──
-    prompt = st.chat_input("输入股票代码（如 600150）或直接提问...")
+    # ── 原生chat_input：accept_file=True 自带 + 附件按钮（Claude样式）──
+    prompt = st.chat_input(
+        "输入股票代码（如 600150）或直接提问...",
+        accept_file="multiple",
+        file_type=["png", "jpg", "jpeg", "webp", "pdf", "csv", "txt"],
+    )
     if prompt:
+        text = prompt.text or ""
+        files = prompt.files or []
         if not st.session_state.current_conv:
             new_conv()
         cid = st.session_state.current_conv
-        has_file = st.session_state.up_file is not None
-        has_img = st.session_state.up_image is not None
-        file_name = (
-            st.session_state.up_image.name
-            if has_img
-            else (st.session_state.up_file.name if has_file else "")
-        )
+        file_name = " / ".join(f.name for f in files) if files else ""
+        # 缓存附件供后端多模态接口使用
+        st.session_state.up_file = files[0] if files else None
         st.session_state.conversations[cid]["messages"].append(
             {
                 "role": "user",
-                "content": prompt,
-                "has_file": has_file or has_img,
+                "content": text if text else f"（上传了 {file_name}）",
+                "has_file": bool(files),
                 "file_name": file_name,
             }
         )
-        # 发完清除附件
-        st.session_state.up_file = None
-        st.session_state.up_image = None
-        codes = re.findall(r"\b\d{6}\b", prompt)
+        codes = re.findall(r"\b\d{6}\b", text)
         if codes:
             st.session_state._pending = codes[0]
         else:
