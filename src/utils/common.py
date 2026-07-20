@@ -188,6 +188,9 @@ def render_sidebar():
             f'<div style="font-size:11px;color:#9CA3AF;padding:2px 8px 8px">{dot}</div>',
             unsafe_allow_html=True,
         )
+        if st.button("🏠 返回主页", use_container_width=True, key="sb_home"):
+            import webbrowser
+            st.markdown('<meta http-equiv="refresh" content="0;url=https://alphastock.cloud">', unsafe_allow_html=True)
         if st.button("退出登录", use_container_width=True, key="logout"):
             import requests as req
 
