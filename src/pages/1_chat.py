@@ -246,7 +246,7 @@ for m in msgs:
 <div class="bubble-a"><div class="av">A</div>
 <div style="flex:1;min-width:0;background:white;border:1px solid #E5E7EB;border-radius:12px;padding:20px">
   <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #F3F4F6;padding-bottom:12px;margin-bottom:16px">
-    <span style="font-size:18px;font-weight:700">{data.get("stock_code","标的")} 投研报告</span>
+    <span style="font-size:18px;font-weight:700">{data.get("stock_code","标的")} {data.get("stock_name","")} 投研报告</span>
     <span style="font-size:13px;font-weight:700">{badge}</span>
   </div>
 """, unsafe_allow_html=True)

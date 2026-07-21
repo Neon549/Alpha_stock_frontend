@@ -21,7 +21,12 @@ init_session()
 params = st.query_params
 if "token" in params:
     st.session_state.token    = params["token"]
-    st.session_state.username = params.get("username", "用户")
+    raw_username = params.get("username", "用户")
+    # 修复 URL 参数中文乱码（Latin-1 误解码为 UTF-8）
+    try:
+        st.session_state.username = raw_username.encode('latin-1').decode('utf-8')
+    except Exception:
+        st.session_state.username = raw_username
     # 清除 URL 参数
     st.query_params.clear()
 
