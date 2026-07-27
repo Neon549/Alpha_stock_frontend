@@ -1,2 +1,6 @@
 "react-app/node_modules/" 
 "react-app/dist/" 
+".env" 
+"__pycache__/" 
+"*.pyc" 
+"cache/" 
