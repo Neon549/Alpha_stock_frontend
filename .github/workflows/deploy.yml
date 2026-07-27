@@ -16,7 +16,7 @@ jobs:
           key: ${{ secrets.NEON_ALPHA }}
           script: |
             cd /home/ubuntu/frontend/Alpha_stock_frontend
-            git pull
+            git pull origin main
             cd react-app
             npm install
             npm run build
