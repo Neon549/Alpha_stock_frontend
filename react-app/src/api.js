@@ -42,9 +42,11 @@ async function del(path) {
 
 export const api = {
   login: (username, password) => post('/auth/login', { username, password }),
-  register: (username, password) => post('/auth/register', { username, password }),
+  register: (username, password, email) => post('/auth/register', { username, password, email: email || '' }),
   verify: (token) => post('/auth/verify', { token }),
   googleToken: (email, name, google_id) => post('/auth/google/token', { email, name, google_id }),
+  forgotPassword: (email) => post('/auth/forgot-password', { email }),
+  resetPassword: (token, new_password) => post('/auth/reset-password', { token, new_password }),
 
   chat: (message, model) => post('/chat', withToken({ message, model })),
   analyze: (stock_code, model) => post('/analyze', withToken({ stock_code, model })),

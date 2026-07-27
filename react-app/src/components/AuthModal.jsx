@@ -38,16 +38,21 @@ export default function AuthModal() {
   const [loginPass, setLoginPass] = useState('')
   const [regUser, setRegUser] = useState('')
   const [regPass, setRegPass] = useState('')
+  const [regEmail, setRegEmail] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [pwChecks, setPwChecks] = useState({ len: false, lower: false, upper: false, num: false })
+  const [forgotMode, setForgotMode] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [forgotSent, setForgotSent] = useState(false)
   const overlayRef = useRef()
 
   useEffect(() => {
     if (!isOpen) {
       setError('')
       setLoginUser(''); setLoginPass('')
-      setRegUser(''); setRegPass('')
+      setRegUser(''); setRegPass(''); setRegEmail('')
+      setForgotMode(false); setForgotEmail(''); setForgotSent(false)
     }
   }, [isOpen])
 
@@ -87,11 +92,25 @@ export default function AuthModal() {
     if (regPass.length < 8) { setError('密码至少8位'); return }
     setLoading(true)
     try {
-      const d = await api.register(regUser, regPass)
+      const d = await api.register(regUser, regPass, regEmail)
       login(d.token, d.username)
       close()
     } catch (e) {
       setError(e.message || '注册失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function doForgotPassword() {
+    setError('')
+    if (!forgotEmail) { setError('请输入邮箱'); return }
+    setLoading(true)
+    try {
+      await api.forgotPassword(forgotEmail)
+      setForgotSent(true)
+    } catch (e) {
+      setError(e.message || '发送失败，请稍后重试')
     } finally {
       setLoading(false)
     }
@@ -155,36 +174,75 @@ export default function AuthModal() {
 
         {tab === 'login' ? (
           <div className="m-panel active">
-            <div className="m-group">
-              <label className="m-label">用户名</label>
-              <input className="m-input" placeholder="输入用户名" value={loginUser}
-                onChange={e => setLoginUser(e.target.value)} autoComplete="off" />
-            </div>
-            <div className="m-group">
-              <label className="m-label">密码</label>
-              <input className="m-input" type="password" placeholder="输入密码" value={loginPass}
-                onChange={e => setLoginPass(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && doLogin()} />
-            </div>
-            {error && <div className="m-error">{error}</div>}
-            <button className="m-submit" onClick={doLogin} disabled={loading}>
-              {loading ? '登录中…' : '登录'}
-            </button>
-
-            <div className="m-divider"><span>或使用第三方账号登录</span></div>
-            <div className="m-socials">
-              <button className="m-social-btn" onClick={handleGoogleLogin}>
-                <GoogleIcon /> Google 登录
-              </button>
-              <div className="m-socials-row">
-                <button className="m-social-btn m-social-half" onClick={handleWechatLogin}>
-                  <WechatIcon /> 微信登录
+            {forgotMode ? (
+              forgotSent ? (
+                <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                  <div style={{ fontSize: 36, marginBottom: 12 }}>📬</div>
+                  <p style={{ color: 'var(--text-1)', marginBottom: 8 }}>重置邮件已发送！</p>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13 }}>请查收 {forgotEmail} 的邮件，点击链接重置密码。链接1小时内有效。</p>
+                  <button className="m-link-btn" onClick={() => { setForgotMode(false); setForgotSent(false); setForgotEmail('') }}>
+                    返回登录
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p style={{ color: 'var(--text-2)', fontSize: 13, marginBottom: 16 }}>
+                    输入注册时使用的邮箱，我们将发送重置链接。
+                  </p>
+                  <div className="m-group">
+                    <label className="m-label">注册邮箱</label>
+                    <input className="m-input" type="email" placeholder="your@email.com"
+                      value={forgotEmail} onChange={e => { setForgotEmail(e.target.value); setError('') }}
+                      onKeyDown={e => e.key === 'Enter' && doForgotPassword()} autoFocus />
+                  </div>
+                  {error && <div className="m-error">{error}</div>}
+                  <button className="m-submit" onClick={doForgotPassword} disabled={loading}>
+                    {loading ? '发送中…' : '发送重置邮件'}
+                  </button>
+                  <button className="m-link-btn" onClick={() => { setForgotMode(false); setError('') }}>
+                    ← 返回登录
+                  </button>
+                </>
+              )
+            ) : (
+              <>
+                <div className="m-group">
+                  <label className="m-label">用户名</label>
+                  <input className="m-input" placeholder="输入用户名" value={loginUser}
+                    onChange={e => setLoginUser(e.target.value)} autoComplete="off" />
+                </div>
+                <div className="m-group">
+                  <label className="m-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>密码</span>
+                    <button className="m-link-btn" style={{ fontSize: 12 }}
+                      onClick={() => { setForgotMode(true); setError('') }}>
+                      忘记密码？
+                    </button>
+                  </label>
+                  <input className="m-input" type="password" placeholder="输入密码" value={loginPass}
+                    onChange={e => setLoginPass(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && doLogin()} />
+                </div>
+                {error && <div className="m-error">{error}</div>}
+                <button className="m-submit" onClick={doLogin} disabled={loading}>
+                  {loading ? '登录中…' : '登录'}
                 </button>
-                <button className="m-social-btn m-social-half" onClick={handleQQLogin}>
-                  <QQIcon /> QQ 登录
-                </button>
-              </div>
-            </div>
+                <div className="m-divider"><span>或使用第三方账号登录</span></div>
+                <div className="m-socials">
+                  <button className="m-social-btn" onClick={handleGoogleLogin}>
+                    <GoogleIcon /> Google 登录
+                  </button>
+                  <div className="m-socials-row">
+                    <button className="m-social-btn m-social-half" onClick={handleWechatLogin}>
+                      <WechatIcon /> 微信登录
+                    </button>
+                    <button className="m-social-btn m-social-half" onClick={handleQQLogin}>
+                      <QQIcon /> QQ 登录
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         ) : (
           <div className="m-panel active">
@@ -192,6 +250,11 @@ export default function AuthModal() {
               <label className="m-label">用户名</label>
               <input className="m-input" placeholder="设置用户名（4-20位）" value={regUser}
                 onChange={e => setRegUser(e.target.value)} autoComplete="off" />
+            </div>
+            <div className="m-group">
+              <label className="m-label">邮箱 <span style={{ color: 'var(--text-2)', fontWeight: 400 }}>(用于找回密码)</span></label>
+              <input className="m-input" type="email" placeholder="your@email.com（推荐填写）"
+                value={regEmail} onChange={e => setRegEmail(e.target.value)} />
             </div>
             <div className="m-group">
               <label className="m-label">密码</label>
@@ -210,7 +273,6 @@ export default function AuthModal() {
             <button className="m-submit" onClick={doRegister} disabled={loading}>
               {loading ? '注册中…' : '注册并进入'}
             </button>
-
             <div className="m-divider"><span>或使用第三方账号注册</span></div>
             <div className="m-socials">
               <button className="m-social-btn" onClick={handleGoogleLogin}>

@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Chat from './pages/Chat'
 import Backtest from './pages/Backtest'
 import Stock from './pages/Stock'
+import ResetPassword from './pages/ResetPassword'
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/chat" element={<Chat />} />
         <Route path="/backtest" element={<Backtest />} />
         <Route path="/stock" element={<Stock />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </>
   )

@@ -613,6 +613,12 @@ footer { background: var(--ink); padding: 64px 32px 32px; }
 }
 .m-social-btn:hover { border-color: #a5b4fc; background: rgba(99,102,241,0.04); transform: translateY(-1px); }
 .m-social-half { font-size: 13px; padding: 10px 10px; }
+.m-link-btn {
+  background: none; border: none; color: #6366f1; cursor: pointer;
+  font-size: 13px; padding: 2px 0; font-family: inherit;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.m-link-btn:hover { color: #4f46e5; }
 
 /* ── Tabs ── */
 .tabs-nav { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 28px; }
