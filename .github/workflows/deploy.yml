@@ -1,0 +1,24 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.NEON_ALPHA }}
+          script: |
+            cd /home/ubuntu/frontend/Alpha_stock_frontend
+            git pull
+            cd react-app
+            npm install
+            npm run build
+            systemctl reload nginx
+            echo "✅ Frontend deployed successfully"
