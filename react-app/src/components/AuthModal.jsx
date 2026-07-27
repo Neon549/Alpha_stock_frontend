@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuth, useModal } from '../store'
 import { api } from '../api'
+import { useGoogleLogin } from '@react-oauth/google'
 
 function GoogleIcon() {
   return (
@@ -96,8 +97,28 @@ export default function AuthModal() {
     }
   }
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(true)
+        const userResp = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        })
+        const userInfo = await userResp.json()
+        const d = await api.googleToken(userInfo.email, userInfo.name, userInfo.id)
+        login(d.token, d.username)
+        close()
+      } catch (e) {
+        setError('Google 登录失败，请重试')
+      } finally {
+        setLoading(false)
+      }
+    },
+    onError: () => setError('Google 登录被取消'),
+  })
+
   function handleGoogleLogin() {
-    window.location.href = '/api/v1/auth/google'
+    googleLogin()
   }
 
   function handleWechatLogin() {

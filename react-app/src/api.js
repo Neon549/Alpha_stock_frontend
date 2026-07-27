@@ -44,6 +44,7 @@ export const api = {
   login: (username, password) => post('/auth/login', { username, password }),
   register: (username, password) => post('/auth/register', { username, password }),
   verify: (token) => post('/auth/verify', { token }),
+  googleToken: (email, name, google_id) => post('/auth/google/token', { email, name, google_id }),
 
   chat: (message, model) => post('/chat', withToken({ message, model })),
   analyze: (stock_code, model) => post('/analyze', withToken({ stock_code, model })),
