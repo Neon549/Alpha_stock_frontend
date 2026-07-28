@@ -80,7 +80,8 @@ export default function AuthModal() {
       login(d.token, d.username)
       close()
     } catch (e) {
-      setError(e.message || '登录失败')
+      const msg = e.message || ''
+      setError(msg === 'Failed to fetch' || msg === 'fetch failed' ? '服务暂时不可用，请稍后重试' : msg || '登录失败')
     } finally {
       setLoading(false)
     }
@@ -96,7 +97,8 @@ export default function AuthModal() {
       login(d.token, d.username)
       close()
     } catch (e) {
-      setError(e.message || '注册失败')
+      const msg = e.message || ''
+      setError(msg === 'Failed to fetch' || msg === 'fetch failed' ? '服务暂时不可用，请稍后重试' : msg || '注册失败')
     } finally {
       setLoading(false)
     }
@@ -123,12 +125,13 @@ export default function AuthModal() {
         const userResp = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         })
+        if (!userResp.ok) throw new Error('无法获取 Google 用户信息')
         const userInfo = await userResp.json()
         const d = await api.googleToken(userInfo.email, userInfo.name, userInfo.id)
         login(d.token, d.username)
         close()
       } catch (e) {
-        setError('Google 登录失败，请重试')
+        setError(e.message && e.message !== 'Failed to fetch' ? e.message : 'Google 登录失败，服务暂时不可用，请稍后重试')
       } finally {
         setLoading(false)
       }
