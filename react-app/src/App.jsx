@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import AuthModal from './components/AuthModal'
 import Home from './pages/Home'
@@ -8,9 +8,12 @@ import Stock from './pages/Stock'
 import ResetPassword from './pages/ResetPassword'
 
 export default function App() {
+  const { pathname } = useLocation()
+  const showNavbar = pathname === '/'
+
   return (
     <>
-      <Navbar />
+      {showNavbar && <Navbar />}
       <AuthModal />
       <Routes>
         <Route path="/" element={<Home />} />
