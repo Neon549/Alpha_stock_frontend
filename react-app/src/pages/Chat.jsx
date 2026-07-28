@@ -8,6 +8,7 @@ function SidebarUserPanel() {
   const { username, logout } = useAuth()
   const { open } = useModal()
   const navigate = useNavigate()
+  const [confirming, setConfirming] = useState(false)
 
   function handleLogout() {
     logout()
@@ -15,6 +16,11 @@ function SidebarUserPanel() {
   }
 
   function handleSwitchUser() {
+    setConfirming(true)
+  }
+
+  function confirmSwitch() {
+    setConfirming(false)
     logout()
     open('login')
   }
@@ -23,12 +29,31 @@ function SidebarUserPanel() {
     <div className="sidebar-user-panel">
       <div className="sup-avatar">{(username || '?')[0].toUpperCase()}</div>
       <div className="sup-info">
-        <div className="sup-name">{username}</div>
-        <div className="sup-actions">
-          <button className="sup-btn" onClick={() => navigate('/')} title="返回主页">🏠</button>
-          <button className="sup-btn" onClick={handleSwitchUser} title="切换用户">🔄</button>
-          <button className="sup-btn sup-btn-logout" onClick={handleLogout} title="退出登录">退出</button>
-        </div>
+        {confirming ? (
+          <div style={{ fontSize: 12, color: 'var(--ink)' }}>
+            <div style={{ marginBottom: 6, fontWeight: 600 }}>确认切换账户？</div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button
+                className="sup-btn"
+                onClick={confirmSwitch}
+                style={{ color: '#dc2626', fontWeight: 700 }}
+              >确认</button>
+              <button
+                className="sup-btn"
+                onClick={() => setConfirming(false)}
+              >取消</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="sup-name">{username}</div>
+            <div className="sup-actions">
+              <button className="sup-btn" onClick={() => navigate('/')} title="返回主页">🏠</button>
+              <button className="sup-btn" onClick={handleSwitchUser} title="切换用户">🔄</button>
+              <button className="sup-btn sup-btn-logout" onClick={handleLogout} title="退出登录">退出</button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
