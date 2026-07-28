@@ -34,41 +34,87 @@ function SidebarUserPanel() {
   )
 }
 
+function renderMd(text) {
+  if (!text || text === '[SKIPPED] 本次分析未启用此维度') {
+    return <span style={{ color: 'var(--muted)', fontSize: 13 }}>本次未启用此维度分析</span>
+  }
+  return text.split('\n').map((line, i) => {
+    if (line.startsWith('### ')) return <h4 key={i} style={{ margin: '12px 0 4px', fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>{line.slice(4)}</h4>
+    if (line.startsWith('## ')) return <h3 key={i} style={{ margin: '14px 0 6px', fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>{line.slice(3)}</h3>
+    if (line.startsWith('# ')) return <h2 key={i} style={{ margin: '16px 0 8px', fontSize: 16, fontWeight: 800, color: 'var(--ink)' }}>{line.slice(2)}</h2>
+    if (line.trim() === '') return <br key={i} />
+    const parts = line.split(/(\*\*[^*]+\*\*)/)
+    return (
+      <p key={i} style={{ margin: '3px 0', fontSize: 13.5, lineHeight: 1.75, color: 'var(--slate)' }}>
+        {parts.map((part, j) =>
+          part.startsWith('**') && part.endsWith('**')
+            ? <strong key={j} style={{ color: 'var(--ink)', fontWeight: 600 }}>{part.slice(2, -2)}</strong>
+            : part
+        )}
+      </p>
+    )
+  })
+}
+
 function AnalyzeCard({ data }) {
-  const [expanded, setExpanded] = useState(false)
-  const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2)
-  const decisionMatch = text.match(/[\[【]综合决策[\]】][：:]\s*([^\n]+)/)
-  const decision = decisionMatch ? decisionMatch[1].trim() : null
-  const isBuy = decision && (decision.includes('买入') || decision.includes('建议买'))
-  const isSell = decision && (decision.includes('减仓') || decision.includes('卖出'))
-  const stockMatch = text.match(/股票[：:]\s*([^\s\n]+)/) || text.match(/\b([0-9]{6})\b/)
-  const stockCode = stockMatch ? stockMatch[1] : ''
+  const [tab, setTab] = useState('decision')
+
+  const isObj = typeof data === 'object' && data !== null
+  const sections = isObj ? {
+    decision: data.decision || '',
+    technical: data.technical_report || '',
+    fundamental: data.fundamental_report || '',
+    sentiment: data.sentiment_report || '',
+    researcher: data.researcher_analysis || data.bull_argument || '',
+  } : { decision: String(data) }
+
+  const stockCode = isObj ? (data.stock_code || '') : ''
+  const stockName = isObj ? (data.stock_name || '') : ''
+  const decisionText = sections.decision
+  const isBuy = decisionText.includes('买入')
+  const isSell = decisionText.includes('卖出') || decisionText.includes('减仓')
+
+  const tabs = [
+    { key: 'decision', label: '📋 综合结论' },
+    { key: 'technical', label: '📈 技术面' },
+    { key: 'fundamental', label: '📊 基本面' },
+    { key: 'sentiment', label: '📰 情绪面' },
+    { key: 'researcher', label: '⚖️ 多空辩论' },
+  ]
 
   return (
-    <div className="analyze-card">
+    <div className="analyze-card" style={{ width: '100%', maxWidth: '100%' }}>
       <div className="analyze-card-header">
         <div className="analyze-card-stock">📊 投研报告</div>
-        {stockCode && <div className="analyze-card-code">{stockCode}</div>}
-      </div>
-      <div className="analyze-card-body">
-        {decision && (
-          <div className="analyze-decision">
-            <span className={`analyze-decision-badge ${isBuy ? 'badge-buy' : isSell ? 'badge-sell' : 'badge-hold'}`}>
-              {isBuy ? '🔴 买入建议' : isSell ? '🟢 减仓建议' : '🟡 观望'}
-            </span>
-            <span style={{ fontSize: 13, color: 'var(--slate)' }}>{decision}</span>
-          </div>
+        {(stockName || stockCode) && (
+          <div className="analyze-card-code">{stockName} {stockCode}</div>
         )}
-        {!expanded && (
-          <div style={{ fontSize: 13, color: 'var(--muted)', fontStyle: 'italic' }}>
-            点击下方按钮查看完整分析报告…
-          </div>
-        )}
+        <span className={`analyze-decision-badge ${isBuy ? 'badge-buy' : isSell ? 'badge-sell' : 'badge-hold'}`} style={{ marginLeft: 'auto' }}>
+          {isBuy ? '🔴 买入' : isSell ? '🟢 减仓' : '🟡 观望'}
+        </span>
       </div>
-      {expanded && <div className="analyze-full-report">{text}</div>}
-      <button className="analyze-expand-btn" onClick={() => setExpanded(v => !v)}>
-        {expanded ? '收起报告 ▲' : '展开完整报告 ▼'}
-      </button>
+
+      <div style={{ display: 'flex', gap: 4, padding: '8px 16px 0', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
+        {tabs.map(t => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            style={{
+              padding: '5px 12px', fontSize: 12, fontWeight: 600, border: 'none', cursor: 'pointer',
+              borderRadius: '6px 6px 0 0', marginBottom: -1,
+              background: tab === t.key ? 'var(--bg)' : 'transparent',
+              color: tab === t.key ? 'var(--purple)' : 'var(--muted)',
+              borderBottom: tab === t.key ? '2px solid var(--purple)' : '2px solid transparent',
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: '16px 20px', minHeight: 200, maxHeight: 480, overflowY: 'auto' }}>
+        {renderMd(sections[tab])}
+      </div>
     </div>
   )
 }
@@ -218,12 +264,17 @@ export default function Chat() {
       let assistantMsg
       if (mode === 'chat') {
         const d = await api.chat(content, model)
-        const reply = d.reply || d.response || d.content || (typeof d === 'string' ? d : JSON.stringify(d))
-        assistantMsg = { role: 'assistant', content: reply, type: 'chat' }
+        // intent=2 时后端返回完整分析对象，按投研报告渲染
+        if (d.intent === 2 && d.decision !== undefined) {
+          assistantMsg = { role: 'assistant', content: d, type: 'analyze' }
+        } else {
+          const reply = d.content || d.reply || d.response || (typeof d === 'string' ? d : JSON.stringify(d))
+          assistantMsg = { role: 'assistant', content: reply, type: 'chat' }
+        }
       } else {
         const d = await api.analyze(content, model)
-        const result = d.report || d.analysis || d.content || d.reply || d
-        assistantMsg = { role: 'assistant', content: result, type: 'analyze' }
+        // analyze 接口直接返回结构化对象
+        assistantMsg = { role: 'assistant', content: d, type: 'analyze' }
       }
       const finalMsgs = [...newMsgs, assistantMsg]
       setMessages(finalMsgs)
