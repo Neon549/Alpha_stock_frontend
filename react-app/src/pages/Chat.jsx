@@ -282,7 +282,10 @@ export default function Chat() {
       setMessages(finalMsgs)
       saveConversation(finalMsgs)
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: `错误：${err.message}`, type: 'chat' }])
+      const errMsg = err.message === 'Failed to fetch' || err.message === 'fetch failed'
+        ? '服务暂时不可用，请稍后重试'
+        : `请求失败：${err.message}`
+      setMessages(prev => [...prev, { role: 'assistant', content: errMsg, type: 'chat' }])
     } finally {
       setLoading(false)
     }
