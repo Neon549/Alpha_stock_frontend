@@ -116,6 +116,58 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Product overview */}
+      <section className="section-products">
+        <div className="section-inner">
+          <div className="products-heading">
+            <div>
+              <div className="section-eyebrow">One platform, full workflow</div>
+              <h2 className="section-title">把研究、验证与决策<br />放进同一套工作流</h2>
+            </div>
+            <p className="products-lead">从捕捉市场机会，到形成可执行的交易计划，AlphaStock 用统一的分析语言把每一步串联起来。</p>
+          </div>
+          <div className="products-grid">
+            {[
+              { no: '01', icon: '⌁', title: 'AI 投研对话', desc: '围绕股票、行业和市场问题连续追问，让复杂信息快速沉淀成清晰结论。', action: '进入 AI 助手', path: '/chat' },
+              { no: '02', icon: '↗', title: '策略回测', desc: '用历史数据检查策略的收益、回撤和胜率，先验证，再决定是否执行。', action: '查看回测工具', path: '/backtest' },
+              { no: '03', icon: '◎', title: 'Alpha 选股', desc: '结合多因子评分、板块筛选与今日买点，把值得研究的标的优先呈现。', action: '开始选股', path: '/stock?tab=alpha' },
+            ].map(item => (
+              <article className="product-card" key={item.no}>
+                <div className="product-card-top"><span className="product-number">{item.no}</span><span className="product-icon">{item.icon}</span></div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+                <button onClick={() => goProtected(item.path)}>{item.action} <span>→</span></button>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Workflow */}
+      <section className="section-workflow">
+        <div className="section-inner workflow-layout">
+          <div className="workflow-copy">
+            <div className="section-eyebrow">Research workflow</div>
+            <h2 className="section-title">不是给一条结论，<br />而是给你完整依据。</h2>
+            <p className="section-desc">每一个建议都应该能追溯到数据、逻辑与风险边界。AlphaStock 把研究过程透明地呈现在你面前。</p>
+            <button className="btn-workflow" onClick={() => goProtected('/chat')}>体验完整投研流程 <span>→</span></button>
+          </div>
+          <div className="workflow-panel">
+            {[
+              ['01', '发现机会', '扫描今日买点、板块热度与多因子评分，锁定优先级更高的标的。'],
+              ['02', '多维研究', '从基本面、技术面、情绪面交叉核验，记录多头与空头的关键观点。'],
+              ['03', '量化验证', '将策略放进历史行情，衡量收益、风险和适用条件。'],
+              ['04', '形成计划', '输出可执行的仓位、目标、止损与风险提示，辅助你做最后判断。'],
+            ].map(([no, title, desc]) => (
+              <div className="workflow-step" key={no}>
+                <span className="workflow-no">{no}</span>
+                <div><h3>{title}</h3><p>{desc}</p></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Stats ── */}
       <section id="stats" className="section-stats">
         <div className="stats-grid">
@@ -125,6 +177,18 @@ export default function Home() {
               <div className="stat-label">{l}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Final call to action */}
+      <section className="section-cta">
+        <div className="section-inner cta-inner">
+          <div>
+            <div className="section-eyebrow">Start with one question</div>
+            <h2>从下一次研究开始，<br />让决策更有依据。</h2>
+            <p>输入股票代码，或直接问一个你正在关注的市场问题。</p>
+          </div>
+          <button className="btn-cta" onClick={() => goProtected('/chat')}>进入 Alpha AI <span>→</span></button>
         </div>
       </section>
 
