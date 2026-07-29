@@ -156,6 +156,11 @@ function AuthGate() {
 
 let convIdCounter = Date.now()
 
+function createConversationId() {
+  convIdCounter += 1
+  return `conv-${Date.now()}-${convIdCounter}`
+}
+
 export default function Chat() {
   const { token, username } = useAuth()
   const navigate = useNavigate()
@@ -186,12 +191,33 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  function newConversation() {
+  function resetDraft() {
     setCurrentConvId(null)
     setMessages([])
     setInput('')
     setStockCode('')
+    setStockName('')
     setAttachments([])
+  }
+
+  async function newConversation() {
+    const id = createConversationId()
+    const conversation = { id, conv_id: id, title: '新对话', messages: [] }
+    setCurrentConvId(id)
+    setMessages([])
+    setInput('')
+    setStockCode('')
+    setStockName('')
+    setAttachments([])
+    setConversations(prev => [conversation, ...prev])
+
+    if (!username) return
+    try {
+      await api.saveConversation({ id, username, title: conversation.title, messages: [] })
+    } catch (err) {
+      setConversations(prev => prev.filter(c => (c.id || c.conv_id) !== id))
+      setCurrentConvId(null)
+    }
   }
 
   function loadConversation(conv) {
@@ -205,25 +231,27 @@ export default function Chat() {
     try {
       await api.deleteConversation(id)
       setConversations(prev => prev.filter(c => (c.id || c.conv_id) !== id))
-      if (currentConvId === id) newConversation()
+      if (currentConvId === id) resetDraft()
     } catch (err) {
       alert(err.message)
     }
   }
 
   async function saveConversation(msgs) {
-    if (!username || msgs.length < 2) return
+    if (!username) return
+    const id = currentConvId || createConversationId()
     const title = msgs.find(m => m.role === 'user')?.content?.slice(0, 30) || '新对话'
     try {
-      const saved = await api.saveConversation({ username, title, messages: msgs, conv_id: currentConvId || undefined })
-      const id = saved?.conv_id || saved?.id || currentConvId || `local-${++convIdCounter}`
+      await api.saveConversation({ id, username, title, messages: msgs })
       setCurrentConvId(id)
       setConversations(prev => {
         const exists = prev.find(c => (c.id || c.conv_id) === id)
         if (exists) return prev.map(c => (c.id || c.conv_id) === id ? { ...c, messages: msgs, title } : c)
         return [{ id, conv_id: id, title, messages: msgs }, ...prev]
       })
-    } catch { }
+    } catch (err) {
+      console.error('保存对话失败：', err)
+    }
   }
 
   function handleFileChange(e) {
@@ -280,7 +308,9 @@ export default function Chat() {
       const errMsg = err.message === 'Failed to fetch' || err.message === 'fetch failed'
         ? '服务暂时不可用，请稍后重试'
         : `请求失败：${err.message}`
-      setMessages(prev => [...prev, { role: 'assistant', content: errMsg, type: 'chat' }])
+      const failedMsgs = [...newMsgs, { role: 'assistant', content: errMsg, type: 'chat' }]
+      setMessages(failedMsgs)
+      saveConversation(failedMsgs)
     } finally {
       setLoading(false)
     }

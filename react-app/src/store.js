@@ -1,18 +1,22 @@
 import { create } from 'zustand'
 
 export const useAuth = create((set, get) => ({
-  token: localStorage.getItem('token') || null,
-  username: localStorage.getItem('username') || null,
+  // Keep authentication only for the current browser session. Closing the
+  // browser/tab starts a fresh session and requires a new login.
+  token: sessionStorage.getItem('token') || null,
+  username: sessionStorage.getItem('username') || null,
 
   login(token, username) {
-    localStorage.setItem('token', token)
-    localStorage.setItem('username', username)
+    localStorage.removeItem('token')
+    localStorage.removeItem('username')
+    sessionStorage.setItem('token', token)
+    sessionStorage.setItem('username', username)
     set({ token, username })
   },
 
   logout() {
-    localStorage.removeItem('token')
-    localStorage.removeItem('username')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('username')
     set({ token: null, username: null })
   },
 
