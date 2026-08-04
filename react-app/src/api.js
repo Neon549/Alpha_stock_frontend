@@ -40,6 +40,18 @@ async function del(path) {
   return true
 }
 
+async function uploadDocument(file, sessionId) {
+  const form = new FormData()
+  form.append('file', file)
+  form.append('session_id', sessionId)
+  const r = await fetch(BASE + '/upload/document', { method: 'POST', body: form })
+  const text = await r.text()
+  let d = {}
+  try { d = JSON.parse(text) } catch { d = { detail: text || `请求失败 (${r.status})` } }
+  if (!r.ok) throw new Error(d.detail || `上传失败 (${r.status})`)
+  return d
+}
+
 export const api = {
   login: (username, password) => post('/auth/login', { username, password }),
   register: (username, password, email) => post('/auth/register', { username, password, email: email || '' }),
@@ -48,8 +60,11 @@ export const api = {
   forgotPassword: (email) => post('/auth/forgot-password', { email }),
   resetPassword: (token, new_password) => post('/auth/reset-password', { token, new_password }),
 
-  chat: (message, model) => post('/chat', withToken({ message, model })),
-  analyze: (stock_code, model) => post('/analyze', withToken({ stock_code, model })),
+  chat: (message, model, session_id) => post('/chat', withToken({ message, model, session_id })),
+  analyze: (stock_code, model, session_id) => post('/analyze', withToken({ stock_code, model, session_id })),
+  uploadDocument,
+  cleanupDocumentSession: (sessionId) => del(`/upload/session/${encodeURIComponent(sessionId)}`),
+  cleanupDocument: (sessionId, documentId) => del(`/upload/session/${encodeURIComponent(sessionId)}/document/${encodeURIComponent(documentId)}`),
 
   backtest: (params) => post('/backtest', withToken(params)),
   getStrategies: () => get('/backtest/strategies'),

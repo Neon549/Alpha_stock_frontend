@@ -622,6 +622,17 @@ footer { background: var(--ink); padding: 64px 32px 32px; }
 .ac-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
 .ac-tab:hover:not(.active) { color: #475569; }
 .ac-body { padding: 18px 20px; min-height: 180px; max-height: 460px; overflow-y: auto; }
+.ac-citations { padding: 12px 20px 16px; border-top: 1px solid #eef2f7; background: #fafbff; }
+.ac-citations-title { margin-bottom: 7px; font-size: 12px; font-weight: 700; color: #64748b; }
+.ac-citation { display: flex; flex-wrap: wrap; gap: 5px 10px; padding: 5px 0; font-size: 12px; color: #64748b; }
+.ac-citation-file { color: #4f46e5; font-weight: 600; }
+.ac-evidence-cards { padding: 12px 20px 16px; border-top: 1px solid #eef2f7; background: #fff; }
+.ac-evidence-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px 10px; margin-top: 7px; }
+.ac-evidence-title { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #334155; }
+.ac-evidence-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 11px; color: #64748b; }
+.ac-freshness { border-radius: 999px; padding: 2px 6px; font-size: 10px; font-weight: 700; }
+.ac-freshness.current { background: #dcfce7; color: #15803d; }
+.ac-freshness.stale { background: #fef3c7; color: #a16207; }
 
 /* Input area */
 .cl-input-area {

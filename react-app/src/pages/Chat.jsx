@@ -39,6 +39,8 @@ function AnalyzeCard({ data }) {
 
   const stockCode = isObj ? (data.stock_code || '') : ''
   const stockName = isObj ? (data.stock_name || '') : ''
+  const citations = isObj && Array.isArray(data.document_citations) ? data.document_citations : []
+  const evidenceCards = isObj && Array.isArray(data.evidence_cards) ? data.evidence_cards : []
   const isBuy = sections.decision.includes('买入')
   const isSell = sections.decision.includes('卖出') || sections.decision.includes('减仓')
 
@@ -74,6 +76,39 @@ function AnalyzeCard({ data }) {
       <div className="ac-body">
         {renderMd(sections[tab])}
       </div>
+      {citations.length > 0 && (
+        <div className="ac-citations">
+          <div className="ac-citations-title">文档依据</div>
+          {citations.map(citation => (
+            <div className="ac-citation" key={citation.evidence_id}>
+              <span className="ac-citation-file">{citation.filename || '已上传文档'}</span>
+              <span>{citation.section || '正文'}</span>
+              {citation.page && <span>第 {citation.page} 页</span>}
+            </div>
+          ))}
+        </div>
+      )}
+      {evidenceCards.length > 0 && (
+        <div className="ac-evidence-cards">
+          <div className="ac-citations-title">数据证据</div>
+          {evidenceCards.map(card => (
+            <div className="ac-evidence-card" key={card.evidence_id}>
+              <div className="ac-evidence-title">
+                <strong>{card.title || '财务摘要'}</strong>
+                <span className={`ac-freshness ${card.usable_for_current_conclusion ? 'current' : 'stale'}`}>
+                  {card.usable_for_current_conclusion ? '可作为当前结论依据' : '仅作历史参考'}
+                </span>
+              </div>
+              <div className="ac-evidence-meta">
+                <span>来源：{card.data_source || '未知'}</span>
+                <span>抓取：{card.retrieved_at || '未知'}</span>
+                <span>财报期：{card.report_period || '未知'}</span>
+                {Number.isFinite(card.age_days) && <span>距今：{card.age_days} 天</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -85,7 +120,7 @@ function ChatBubble({ msg }) {
         <div className="cb-user-bubble">
           {msg.attachments?.length > 0 && (
             <div className="cb-attachments">
-              {msg.attachments.map((f, i) => <span key={i} className="cb-attach">📎 {f}</span>)}
+              {msg.attachments.map((f, i) => <span key={i} className="cb-attach">📎 {typeof f === 'string' ? f : f.name}</span>)}
             </div>
           )}
           {msg.content}
@@ -178,6 +213,7 @@ export default function Chat() {
   const messagesEndRef = useRef()
   const inputRef = useRef()
   const fileInputRef = useRef()
+  const documentSessionRef = useRef(null)
 
   useEffect(() => {
     if (token && username) {
@@ -198,6 +234,7 @@ export default function Chat() {
     setStockCode('')
     setStockName('')
     setAttachments([])
+    cleanupDocumentSession()
   }
 
   async function newConversation() {
@@ -209,6 +246,7 @@ export default function Chat() {
     setStockCode('')
     setStockName('')
     setAttachments([])
+    cleanupDocumentSession()
     setConversations(prev => [conversation, ...prev])
 
     if (!username) return
@@ -254,13 +292,53 @@ export default function Chat() {
     }
   }
 
-  function handleFileChange(e) {
-    const files = Array.from(e.target.files)
-    setAttachments(prev => [...prev, ...files.map(f => f.name)])
-    e.target.value = ''
+  function ensureDocumentSession() {
+    if (!documentSessionRef.current) {
+      documentSessionRef.current = `web-${crypto.randomUUID()}`
+    }
+    return documentSessionRef.current
   }
 
-  function removeAttachment(i) {
+  function cleanupDocumentSession() {
+    const sessionId = documentSessionRef.current
+    documentSessionRef.current = null
+    if (sessionId) api.cleanupDocumentSession(sessionId).catch(() => {})
+  }
+
+  async function handleFileChange(e) {
+    const files = Array.from(e.target.files)
+    e.target.value = ''
+    if (!files.length) return
+
+    setLoading(true)
+    try {
+      const sessionId = ensureDocumentSession()
+      const uploaded = []
+      for (const file of files) {
+        if (file.type.startsWith('image/')) {
+          throw new Error('图片分析暂不进入文档检索；请上传 PDF、Word、TXT 或 CSV 文档')
+        }
+        const result = await api.uploadDocument(file, sessionId)
+        uploaded.push({ name: result.filename, documentId: result.document_id, chunkCount: result.chunk_count })
+      }
+      setAttachments(prev => [...prev, ...uploaded])
+    } catch (err) {
+      window.alert(`文档上传失败：${err.message}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function removeAttachment(i) {
+    const attachment = attachments[i]
+    if (attachment?.documentId && documentSessionRef.current) {
+      try {
+        await api.cleanupDocument(documentSessionRef.current, attachment.documentId)
+      } catch (err) {
+        window.alert(`移除文档失败：${err.message}`)
+        return
+      }
+    }
     setAttachments(prev => prev.filter((_, j) => j !== i))
   }
 
@@ -279,7 +357,7 @@ export default function Chat() {
       role: 'user',
       content: mode === 'chat' ? content : `分析股票: ${content}${stockName ? ` (${stockName})` : ''}`,
       type: mode,
-      attachments: attachments.length > 0 ? [...attachments] : undefined,
+      attachments: attachments.length > 0 ? attachments.map(item => typeof item === 'string' ? item : item.name) : undefined,
     }
     const newMsgs = [...messages, userMsg]
     setMessages(newMsgs)
@@ -290,7 +368,7 @@ export default function Chat() {
     try {
       let assistantMsg
       if (mode === 'chat') {
-        const d = await api.chat(content, model)
+        const d = await api.chat(content, model, documentSessionRef.current)
         if (d.intent === 2 && d.decision !== undefined) {
           assistantMsg = { role: 'assistant', content: d, type: 'analyze' }
         } else {
@@ -298,7 +376,7 @@ export default function Chat() {
           assistantMsg = { role: 'assistant', content: reply, type: 'chat' }
         }
       } else {
-        const d = await api.analyze(content, model)
+        const d = await api.analyze(content, model, documentSessionRef.current)
         assistantMsg = { role: 'assistant', content: d, type: 'analyze' }
       }
       const finalMsgs = [...newMsgs, assistantMsg]
@@ -458,9 +536,9 @@ export default function Chat() {
 
               {attachments.length > 0 && (
                 <div className="cl-attach-list">
-                  {attachments.map((name, i) => (
+                  {attachments.map((attachment, i) => (
                     <div key={i} className="cl-attach-chip">
-                      <span>📎 {name}</span>
+                      <span>📎 {typeof attachment === 'string' ? attachment : `${attachment.name}（${attachment.chunkCount} 个检索片段）`}</span>
                       <button onClick={() => removeAttachment(i)}>✕</button>
                     </div>
                   ))}
